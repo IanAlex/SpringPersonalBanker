@@ -1,0 +1,884 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+</h:head>
+<h:body>
+<h:outputStylesheet library="css" name="pbstyles.css"  />
+<h:form id="form">
+   <p:growl id="growl" showDetail="true" life="3000"/> 
+ 
+   <p:tabView  id="tabView" activeIndex="2" dynamic="true">  
+        <p:ajax event="tabChange" listener="#{tabNavigator.onAccountPageTabChange}" update=":form:growl"/>
+        <p:tab titleStyleClass="nav-menuTab" title="About" id="About">  
+            <h:panelGrid columns="1" cellpadding="10">             	          	
+                <h:outputText  
+                    value="This is Ians Personal Bank App. on Account page" /> 
+            </h:panelGrid>  
+        </p:tab>
+        <p:tab  titleStyleClass="nav-menuTab" title="View/Edit Client Settings" id="ClientSettings">  
+            <h:panelGrid columns="1" cellpadding="10">             	          	
+                <h:outputText  
+                    value="This is Ians View/Edit Client Settings on Account page" /> 
+            </h:panelGrid>  
+        </p:tab>
+        <p:tab titleStyleClass="nav-menuTab" title="Portfolio Information" id="Portfolio">
+           <p:dialog id="dialogH" header="Guidance for Account Detail" widgetVar="dlgH" resizable="false"  
+           		showEffect="fade" hideEffect="explode"> 
+           	 <h:panelGrid styleClass="desc-display" > 
+           		<h:outputText styleClass="desc-miniheader-display" value="The Account Detail Information Page consists of:" />
+                <h:outputText value="(i) detailed account information data (e.g. Account Name, Open Date, Balance, etc.)" />
+                <h:outputText value="(ii) an Account Transaction Activity grid consisting of transactions.   Initially all records are shown (ordered by transaction date) but the user can refine the search to date range and/or transaction type (and clicking the 'View' button).   For refined search, running totals are suppressed.   When the user clicks/selects a specific transaction record, the transaction detail is shown in a dialog and the user may be able to reverse a transaction (see criteria below)." />
+                <h:outputText value="(iii) the ability to Create a New Transaction (except for annuities and non-cashable GIC/Term Deposits) by selecting Transaction Type and clicking 'Go' button." />
+                <h:outputText value="" />
+                <h:outputText rendered="#{currentScreenInfo.isthereChequing()}" styleClass="desc-miniheader-display" value="Chequing Account Description" />
+                <h:outputText rendered="#{currentScreenInfo.isthereChequing()}" value="An account with cash holdings and no interest earned.  Deposits and withdrawals can be made on this account (with the amounts coming from/going to Cash).   Also cheques can be issued.   
+ Transfers can be made in/out of this account to other chequing accounts or savings accounts.   Also a chequing account may be used as a source of funds when opening another account or for Stock buys.    A chequing account  may also a destination account for stock sells, annuity payments or cashable GIC/Term Deposit withdrawals.   While back-dating of transactions is allowed, please note that validations ensure that any activity into/out of  a chequing account occurs no earlier than opening date of the account and that sufficient funds are available from the source account.  " />
+ 				<h:outputText rendered="#{currentScreenInfo.isthereSavings()}" styleClass="desc-miniheader-display" value="Savings Account Description" />
+                <h:outputText rendered="#{currentScreenInfo.isthereSavings()}" value="An account with cash holdings where interest is earned.   The interest rate on a savings account can vary with the ability for the user to enter in new rates with corresponding effective dates.     The savings account interest rate is annual but interest is calculated on a daily basis on the day-end balance (including accrued interest) with interest debited to the account at the end of each month.  Please note that any change to interest rates and any account activity result in a recalculation of interest (and new month end debits) going forward from the effective date of the change to the system date.   Interest payments are also determined (and updated if necessary) at each login." />
+                <h:outputText rendered="#{currentScreenInfo.isthereSavings()}" value="Transfers can be made in/out of this account to other savings accounts or chequing accounts.   Also a savings account may be used as a source of funds when opening another account or for Stock buys.    A savings account  may also a destination account for stock sells, annuity payments or cashable GIC/Term Deposit withdrawals.   While back-dating of transactions is allowed, please note that validations ensure that any activity into/out of  a chequing account occurs no earlier than opening date of the account and that sufficient funds are available from the source account." />
+                <h:outputText rendered="#{currentScreenInfo.isthereGic()}" styleClass="desc-miniheader-display" value="GIC/Term Deposit Account Description" />
+                <h:outputText rendered="#{currentScreenInfo.isthereGic()}" value="An account where balance is the amount the account opened with minus (in the case of CASHABLE GIC/Term Deposit) any funds out withdrawals.  The maturity value of the account (future value) is also presented in the account summary.   The account has an associated interest rate with compounding option selected when the account is opened (Add An Account wizard tab).  If the GIC/Term Deposit is cashable then Funds Out (to savings/chequing/cash) transactions can be created, otherwise there are no transactions after the account opening." />
+                <h:outputText rendered="#{currentScreenInfo.isthereStock()}" styleClass="desc-miniheader-display" value="Stock Account Description" />
+                <h:outputText rendered="#{currentScreenInfo.isthereStock()}" value="This is an account based upon a particular stock represented by a valid stock exchange symbol.  The current price and market value (price  * No. of Shares) is shown on the account detail with this information retrieved via a web service utilizing the Yahoo Finance API.  When the account is opened (open date) and for Buy/Sell transactions, the historic/current price of the stock is obtained from the Yahoo Finance ticker and this can be applied unless the user elects to used his/her own price.  " />
+                <h:outputText rendered="#{currentScreenInfo.isthereStock()}" value="Buys/Sells have funds coming from / going to Cash or an offset chequing/savings account.   In the case of buys with source of funds from chequing/savings, validation is done to ensure that there are sufficient funds in the source account. Transaction backdating (from system date) is allowed but note that for buys/sells from/to chequing/savings validations are done to ensure that the transaction occurs no earlier than the opening date of the offset chequing/savings account.    Capital gains/losses are computed using the average costing method on stock sells.   To preserve the integrity of capital gain/loss calculations, buys/sells/reversals are not allowed for transaction dates on/before the Stock account's last unreversed Sell transaction date.   Also note that stock buys/sells are not allowed on dates when the underlying stock exchange is closed (e.g. weekends or statutory holidays)." />
+                <h:outputText rendered="#{currentScreenInfo.isthereAnnuity()}" styleClass="desc-miniheader-display" value="Annuity Account Description" />
+                <h:outputText rendered="#{currentScreenInfo.isthereAnnuity()}" value="This is an account with periodic payments made to another account (chequing/savings) or to Cash.   The term, frequency of payments and interest rate (along with compounding) are determined when the user creates the account (Add an Account wizard tab).   The account summary presents as the balance the present value (PV) of the remaining payments of the annuity computed given the interest, compounding, term and frequency parameters.   The user cannot create new transactions although the open account and payment transactions are shown in the account activity records table (and detail can be viewed by clicking/selecting a transaction)." />
+              </h:panelGrid>
+           </p:dialog>
+			<h:panelGrid  cellpadding="1">
+             <h:outputText value="" />
+             <p:commandLink styleClass="commandlink-display" id="chequingHelp" value="Screen Guidance"  
+                           rendered="#{currentScreenInfo.isthereChequing()}" onclick="dlgH.show()" /> 
+             <h:outputText value="" />
+           </h:panelGrid>
+           <h:panelGrid styleClass="pageheader-display" columns="1" cellpadding="3" rendered="#{currentScreenInfo.isthereChequing()}"> 
+                <h:outputText  
+                    value="Chequing Account Detail Information" />  
+           </h:panelGrid> 
+           
+           <h:panelGrid  columns="4" cellpadding="2" rendered="#{currentScreenInfo.isthereChequing()}"  > 
+           		<h:outputText styleClass="userEntry-label" value="Account Name:" />
+                <h:outputText styleClass="singleresult-display" value="#{chequingDetailMVC.chequing.accountName}" disabled="true" /> 
+                <h:outputLabel styleClass="userEntry-label" value="Account No.:"/>
+                <h:outputText styleClass="singleresult-display" value="#{chequingDetailMVC.chequing.accountNo}" disabled="true" /> 
+                <h:outputLabel styleClass="userEntry-label" value="Registered?"  />
+                <h:selectBooleanCheckbox  value="#{chequingDetailMVC.chequing.registered}" disabled="true" />
+                <h:outputLabel styleClass="userEntry-label" value="Joint?"  />
+    			<h:selectBooleanCheckbox  value="#{chequingDetailMVC.chequing.joint}" disabled="true" />
+    			<h:outputLabel styleClass="userEntry-label"  value="Current Balance:"/>
+                <h:outputText styleClass="singleresult-display" value="#{chequingDetailMVC.chequing.balance}" disabled="true" > 
+                	<f:convertNumber currencySymbol="$" type="currency" /> 
+                </h:outputText> 
+      			<h:outputLabel styleClass="userEntry-label" value="Open Date:"/>
+                <h:outputText styleClass="singleresult-display"  value="#{chequingDetailMVC.chequing.openDt}" disabled="true" >  
+                	<f:convertDateTime pattern="EEEEEEEE, MMM dd, yyyy" />  
+                </h:outputText>              
+            </h:panelGrid>
+            <h:panelGrid columns="4" styleClass="userDoRange-display" cellpadding="0" id="txnListGrpB" rendered="#{currentScreenInfo.isthereChequing()}" >
+            	<f:facet name="header">
+        			<h:outputText styleClass="userDoRange-header" value="Account Transaction Activity Selection Criteria"/>
+    			</f:facet>            	
+ 		    	<h:outputText value="Use All Dates? (un-check to use date range)" rendered="#{currentScreenInfo.isthereChequing() and chequingDetailMVC.useAllDates}" />
+ 		    	<h:outputText value="Use All Dates?" rendered="#{currentScreenInfo.isthereChequing() and !chequingDetailMVC.useAllDates}" /> 
+ 		   		<p:selectBooleanCheckbox id="useAllDatesA" value="#{chequingDetailMVC.useAllDates}" rendered="#{currentScreenInfo.isthereChequing()}" > 
+ 		   			<p:ajax  update="txnListGrpB" />
+ 		   		</p:selectBooleanCheckbox>
+ 		   		<h:outputText value=" " rendered="#{currentScreenInfo.isthereChequing()}" /> 
+ 		   		<h:outputText value=" " rendered="#{currentScreenInfo.isthereChequing()}" /> 
+				<h:outputText value="Date Range: " rendered="#{currentScreenInfo.isthereChequing() and !chequingDetailMVC.useAllDates}" />          
+				<p:calendar id="txnDtMinB"  navigator="true" yearRange="c-120:c+80" value="#{chequingDetailMVC.txnDtMin}" 
+								effect="slideDown" pattern="dd-MMM-yyyy"
+							rendered="#{currentScreenInfo.isthereChequing() and !chequingDetailMVC.useAllDates}"
+							converterMessage="Date must be in valid format" />
+				<h:outputText value=" To " rendered="#{currentScreenInfo.isthereChequing() and !chequingDetailMVC.useAllDates}" /> 
+				<p:calendar id="txnDtMaxB"  navigator="true" yearRange="c-120:c+80" value="#{chequingDetailMVC.txnDtMax}" 
+								effect="slideDown" pattern="dd-MMM-yyyy"
+					    	rendered="#{currentScreenInfo.isthereChequing() and !chequingDetailMVC.useAllDates}"
+							converterMessage="Date must be in valid format" />
+				<h:outputText value="Transaction Type:" rendered="#{currentScreenInfo.isthereChequing()}" /> 
+				<h:selectOneMenu id="chequingTxnQueryTypes" value="#{chequingDetailMVC.selectedChequingTxnQueryType}" >
+   					<f:selectItems value="#{chequingDetailMVC.chequingTxnTypesQueryMap}" />
+   				</h:selectOneMenu>
+				<h:outputText value=" " rendered="#{currentScreenInfo.isthereChequing()}" /> 
+				<h:outputText value=" " rendered="#{currentScreenInfo.isthereChequing()}" /> 
+           		<h:commandButton styleClass="button-display" id="txnListGetB" value="View"  >
+           			<f:ajax event="click" execute="txnListGrpB" render="@form" listener="#{chequingDetailMVC.retrieveTxnList}" />  
+           		</h:commandButton> 
+   		   </h:panelGrid> 
+           <p:dataTable id="chequingTxnTable" var="chequingTxn" value="#{chequingDetailMVC.txnList}" 
+               rows="15" paginator="true" paginatorPosition="bottom" styleClass="dataTable-display"
+               rowKey="#{chequingTxn.txnId}"  selection="#{chequingDetailMVC.selectedTxn}" selectionMode="single" 
+                 rendered="#{currentScreenInfo.isthereChequing()}" > 
+                <p:ajax event="rowSelect" listener="#{chequingDetailMVC.onRowSelect}" update=":form" oncomplete="chequingTxnDialog.show()" /> 
+                <p:ajax event="rowUnselect"  update=":form"/>
+        		<f:facet name="header">  
+          			 Account Transaction Activity <br> (click a record to see detail) </br>
+        		</f:facet> 
+        		<p:column sortBy="#{chequingTxn.display}" headerText="Type">  
+	           		<h:outputText value="#{chequingTxn.display}" />  
+	     		</p:column> 
+	     		<p:column headerText="Debit">  
+	           		<h:outputText value="#{chequingTxn.amount}" styleClass="debit-display" rendered="#{chequingTxn.drCr eq 'D'}" > 
+	           			<f:convertNumber currencySymbol="$" type="currency" />  
+	           		</h:outputText> 
+	     		</p:column> 
+	     		<p:column  headerText="Credit">  
+	           		<h:outputText value="#{chequingTxn.amount}" styleClass="credit-display" rendered="#{chequingTxn.drCr eq 'C'}" >  
+	           			<f:convertNumber currencySymbol="$" type="currency" /> 
+	           		</h:outputText> 
+	     		</p:column> 	     		
+	     		<p:column sortBy="#{chequingTxn.txnDt}" headerText="Transaction Date">  
+	           		<h:outputText value="#{chequingTxn.txnDt}" >  
+	           			<f:convertDateTime pattern="EEEEEEEE, MMM dd, yyyy" />
+	           		</h:outputText> 
+	     		</p:column>
+	     		<p:column  headerText="Running Balance" rendered="#{chequingDetailMVC.useAllDates and chequingDetailMVC.selectedChequingTxnQueryType eq 'ALL'}">  
+	           		<h:outputText value="#{chequingTxn.runningAcctBalance}"
+	           						rendered="#{chequingDetailMVC.useAllDates and chequingDetailMVC.selectedChequingTxnQueryType eq 'ALL'}" >  
+	           			<f:convertNumber currencySymbol="$" type="currency" /> 
+	           		</h:outputText> 
+	     		</p:column>
+           </p:dataTable>
+           <p:dialog id="dialogA" header="Chequing Transaction Detail" widgetVar="chequingTxnDialog" resizable="false"  rendered="#{currentScreenInfo.isthereChequing()}"
+           		showEffect="fade" hideEffect="explode"> 
+           	  <h:panelGrid columns="2" cellpadding="2"> 
+           	  	<h:outputLabel styleClass="userEntry-label" id="txntypeLblA" for="txntypeA" value="Transaction Type:"  />
+                <h:outputText  styleClass="singleresult-display" disabled="true"  id="txntypeA" value="#{chequingDetailMVC.txntypeDesc}"  />  
+                <h:outputLabel styleClass="userEntry-label" id="statusLblA" for="statusA" value="Status:"  />
+                <h:outputText styleClass="singleresult-display" disabled="true"  id="statusA" value="#{chequingDetailMVC.statusDesc}"  />  
+           		<h:outputLabel styleClass="userEntry-label" id="amountLblA" for="amountA" value="Amount:"  />
+                <h:outputText styleClass="singleresult-display" disabled="true"  id="amountA" value="#{chequingDetailMVC.selectedTxn.amount}"   > 
+                	<f:convertNumber currencySymbol="$" type="currency" />  
+                </h:outputText>  
+                <h:outputLabel styleClass="userEntry-label"  id="drcrLblA" for="drcrA" value="Accounting Entry:"  />
+                <h:outputText styleClass="singleresult-display" disabled="true"  id="drcrA" value="#{chequingDetailMVC.drcrDesc}"  />   
+                <h:outputLabel styleClass="userEntry-label" id="chequeNoLblA" for="chequeNoA" value="Cheque No.:" rendered="#{chequingDetailMVC.chequeIssueFlag}" />
+                <h:outputText styleClass="singleresult-display"   id="chequeNoA" value="#{chequingDetailMVC.selectedTxn.chequeNo}" rendered="#{chequingDetailMVC.chequeIssueFlag}" disabled="true" /> 
+           		<h:outputLabel styleClass="userEntry-label" id="transferAcctInfoLblA" for="transferAcctInfoA" value="Transfer Account:" rendered="#{chequingDetailMVC.transferFlag}" />
+           		<h:outputText styleClass="singleresult-display" id="transferAcctInfoA" value="#{chequingDetailMVC.offsetAcctInfo}" rendered="#{chequingDetailMVC.transferFlag}" disabled="true" />
+                <h:outputLabel styleClass="userEntry-label" id="txnDtLblA" for="txnDtA" value="Transaction Date:" />
+                <h:outputText styleClass="singleresult-display"   id="txnDtA" value="#{chequingDetailMVC.selectedTxn.txnDt}"  disabled="true" >
+                  	<f:convertDateTime pattern="EEEEEEEE, MMM dd, yyyy" />
+                </h:outputText>
+                <h:outputLabel styleClass="userEntry-label" id="dtChangedLblA" for="dtChangedA" value="Date Last Changed:" />
+                <h:outputText styleClass="singleresult-display" id="dtChangedA" value="#{chequingDetailMVC.selectedTxn.dtChanged}" disabled="true" > 
+                   	<f:convertDateTime pattern="EEEEEEEE, MMM dd, yyyy" />
+                </h:outputText>
+                <h:outputLabel styleClass="userEntry-label" id="updatedByLblA" for="updatedByA" value="Updated By:" />
+                <h:outputText styleClass="singleresult-display"  id="updatedByA" value="#{chequingDetailMVC.selectedTxn.updatedBy}" disabled="true" /> 
+           		<p:commandButton styleClass="button-display" id="reversButtonA" value="Reverse Transaction" rendered="#{(chequingDetailMVC.selectedTxn.chequingTxnType ne 'O') and 
+           												( (chequingDetailMVC.offsetAcctInfo eq 'Cash') or
+           		                                        ((chequingDetailMVC.offsetTxnType ne 'O') and (chequingDetailMVC.offsetTxnType ne 'P')) )
+           		                                            and (!chequingDetailMVC.selectedTxn.reversed)}" 
+           		                                 actionListener="#{chequingDetailMVC.reverseChequingTxn}" process=":form"
+           		                  					update=":form"
+           		                  					oncomplete="handleChequingReverseRequest()"
+           		                                       />
+              </h:panelGrid>
+           </p:dialog>
+           <h:panelGrid columns="3" styleClass="userDoRange-display" cellpadding="0" rendered="#{currentScreenInfo.isthereChequing()}"> 
+           		<f:facet name="header">
+        			<h:outputText styleClass="userDoRange-header" value="Create a New Transaction"/>
+    			</f:facet> 
+    			<h:outputLabel id="chequingTxnTypesLbl" for="chequingTxnTypes" value="Transaction Type:"/> 
+  				<h:selectOneMenu id="chequingTxnTypes" value="#{chequingDetailMVC.selectedChequingTxnType}" >
+   					<f:selectItems value="#{chequingDetailMVC.chequingTxnTypesMap}" />
+   				</h:selectOneMenu>
+   				<h:commandButton  id="viewButtonNewChequingTxn" value="Go"  
+                            action="#{chequingDetailMVC.doNewChequingTxnScreen()}"/> 
+           </h:panelGrid> 
+           <h:panelGrid columns="1" styleClass="singleresult-display" cellpadding="2" rendered="#{currentScreenInfo.isthereChequing()}"> 
+           		<p:commandButton styleClass="button-display" id="goAcctSumA" value="Return to Portfolio Holdings"  action="#{tabNavigator.goToAccountSummary}" />  
+           </h:panelGrid>
+           <h:panelGrid  cellpadding="1">
+             <h:outputText value="" />
+             <p:commandLink styleClass="commandlink-display" id="savingsHelp" value="Screen Guidance"  
+                           rendered="#{currentScreenInfo.isthereSavings()}" onclick="dlgH.show()" /> 
+             <h:outputText value="" />
+           </h:panelGrid>
+           <h:panelGrid styleClass="pageheader-display" columns="1" cellpadding="3" rendered="#{currentScreenInfo.isthereSavings()}"> 
+                <h:outputText  
+                    value="Savings Account Detail Information" />  
+            </h:panelGrid> 
+           
+            <h:panelGrid columns="4" cellpadding="2" rendered="#{currentScreenInfo.isthereSavings()}"> 
+           		<h:outputLabel styleClass="userEntry-label" value="Account Name:"/>
+                <h:outputText styleClass="userEntry-label" value="#{savingsDetailMVC.savings.accountName}" disabled="true" /> 
+                <h:outputLabel styleClass="userEntry-label"  for="accountNo" value="Account No.:"/>
+                <h:outputText styleClass="userEntry-label" value="#{savingsDetailMVC.savings.accountNo}" disabled="true" /> 
+                <h:outputLabel styleClass="userEntry-label" value="Registered?" />
+                <h:selectBooleanCheckbox  value="#{savingsDetailMVC.savings.registered}" disabled="true" />
+                <h:outputLabel styleClass="userEntry-label" value="Joint?"  />
+    			<h:selectBooleanCheckbox  value="#{savingsDetailMVC.savings.joint}" disabled="true" />
+    			<h:outputLabel styleClass="userEntry-label"  value="Current Balance:"/>
+                <h:outputText styleClass="userEntry-label" value="#{savingsDetailMVC.savings.balance}" disabled="true" > 
+                	<f:convertNumber currencySymbol="$" type="currency" />
+                </h:outputText>
+      			<h:outputLabel styleClass="userEntry-label"  value="Open Date:"/>
+                <h:outputText styleClass="userEntry-label"  value="#{savingsDetailMVC.savings.openDt}" disabled="true" >   
+                	<f:convertDateTime pattern="EEEEEEEE, MMM dd, yyyy" />   
+                </h:outputText>            
+            </h:panelGrid>
+            <h:panelGrid columns="2" styleClass="userDoSavingRange-display" cellpadding="0" rendered="#{currentScreenInfo.isthereSavings()}"> 
+            	<f:facet name="header">
+        			<h:outputText styleClass="userDoSavingRange-header" value="Savings Account Interest Rates (Annual Compounding)"/>
+    			</f:facet> 
+				<h:outputText value="Current (latest) Rate:" />  
+				<h:outputText disabled="true"  value="#{savingsDetailMVC.currentSRinterest }"   >
+					<f:convertNumber pattern="##0.00%"  />
+				</h:outputText>	
+        		<h:commandLink styleClass="commandlink-display" action="addSavingsRate.xhtml?faces-redirect=true" > 
+                	<h:outputText value="Add Rate" />  	              			 
+                </h:commandLink> 
+                <h:outputText value=" " />   
+                <p:commandLink styleClass="commandlink-display" id="viewOrderedSavingsRates" value="View Historic Rates"  
+                            onclick="dlgR.show()" /> 
+                <h:outputText value=" " />   
+            </h:panelGrid> 
+       		<h:panelGrid columns="4" styleClass="userDoRange-display" cellpadding="0" id="txnListGrpA" rendered="#{currentScreenInfo.isthereSavings()}" >
+            	<f:facet name="header">
+        			<h:outputText styleClass="userDoRange-header" value="Account Transaction Activity Selection Criteria"/>
+    			</f:facet>            	
+ 		    	<h:outputText value="Use All Dates? (un-check to use date range)" rendered="#{currentScreenInfo.isthereSavings() and savingsDetailMVC.useAllDates}" />
+ 		    	<h:outputText value="Use All Dates?" rendered="#{currentScreenInfo.isthereSavings() and !savingsDetailMVC.useAllDates}" /> 
+ 		   		<p:selectBooleanCheckbox id="useAllDatesB" value="#{savingsDetailMVC.useAllDates}" rendered="#{currentScreenInfo.isthereSavings()}" > 
+ 		   			<p:ajax  update="txnListGrpA" />
+ 		   		</p:selectBooleanCheckbox>
+ 		   		<h:outputText value=" " rendered="#{currentScreenInfo.isthereSavings()}" /> 
+ 		   		<h:outputText value=" " rendered="#{currentScreenInfo.isthereSavings()}" /> 
+				<h:outputText value="Date Range: " rendered="#{currentScreenInfo.isthereSavings() and !savingsDetailMVC.useAllDates}" />          
+				<p:calendar id="txnDtMinA"  navigator="true" yearRange="c-120:c+80" value="#{savingsDetailMVC.txnDtMin}" 
+								effect="slideDown" pattern="dd-MMM-yyyy"
+							rendered="#{currentScreenInfo.isthereSavings() and !savingsDetailMVC.useAllDates}"
+							converterMessage="Date must be in valid format" />
+				<h:outputText value=" To " rendered="#{currentScreenInfo.isthereSavings() and !savingsDetailMVC.useAllDates}" /> 
+				<p:calendar id="txnDtMaxA"  navigator="true" yearRange="c-120:c+80" value="#{savingsDetailMVC.txnDtMax}" 
+								effect="slideDown" pattern="dd-MMM-yyyy"
+					    	rendered="#{currentScreenInfo.isthereSavings() and !savingsDetailMVC.useAllDates}"
+							converterMessage="Date must be in valid format" />
+				<h:outputText value="Transaction Type:" rendered="#{currentScreenInfo.isthereSavings()}" /> 
+				<h:selectOneMenu id="savingsTxnQueryTypes" value="#{savingsDetailMVC.selectedSavingsTxnQueryType}" >
+   					<f:selectItems value="#{savingsDetailMVC.savingsTxnTypesQueryMap}" />
+   				</h:selectOneMenu>
+				<h:outputText value=" " rendered="#{currentScreenInfo.isthereSavings()}" /> 
+				<h:outputText value=" " rendered="#{currentScreenInfo.isthereSavings()}" /> 
+           		<h:commandButton styleClass="button-display" id="txnListGetA" value="View"  >
+           			<f:ajax event="click" execute="txnListGrpA" render="@form" listener="#{savingsDetailMVC.retrieveTxnList}" />  
+           		</h:commandButton> 
+   		   </h:panelGrid> 
+			
+			<p:dialog id="dialogR" header="Historic Savings Rates" widgetVar="dlgR" resizable="true" rendered="#{currentScreenInfo.isthereSavings()}"> 
+				<table>
+					<tr>
+						<th>Effective/Start Date</th>
+						<th>         </th>
+						<th>         </th>
+						<th>Interest Rate (Annual Compounding)</th>						
+					</tr>
+					<tbody>
+						<ui:repeat var="rateList" value="#{savingsDetailMVC.orderedSRList}">
+						    <tr>
+								<td>
+									<h:outputText  value="#{rateList.effectiveDt}" disabled="true" >   
+                						<f:convertDateTime pattern="EEEEEEEE, MMM dd, yyyy" />   
+                					</h:outputText> 
+								</td>
+								<td>
+									<h:outputText  value="       " disabled="true" /> 
+								</td>
+								<td>
+									<h:outputText  value="       " disabled="true" /> 
+								</td>
+								<td>
+									<h:outputText styleClass="outputLabel" disabled="true"  value="#{rateList.interestRate }"   >
+										<f:convertNumber pattern="##0.00%"  />
+									</h:outputText>	
+								</td>
+							</tr>																				
+						</ui:repeat>												
+					</tbody>
+				</table>
+			</p:dialog>
+           <p:dataTable id="savingsTxnTable" var="savingsTxn" value="#{savingsDetailMVC.txnList}"
+               rows="15" paginator="true" paginatorPosition="bottom" styleClass="dataTable-display"
+               rowKey="#{savingsTxn.txnId}"  selection="#{savingsDetailMVC.selectedTxn}" selectionMode="single"
+               rendered="#{currentScreenInfo.isthereSavings()}" > 
+                <p:ajax event="rowSelect" listener="#{savingsDetailMVC.onRowSelect}" update=":form" oncomplete="savingsTxnDialog.show()" /> 
+                <p:ajax event="rowUnselect"  update=":form"/>
+        		<f:facet name="header">  
+          			 Account Transaction Activity <br> (click a record to see detail) </br>
+        		</f:facet>
+        		<p:column sortBy="#{savingsTxn.display}" headerText="Type">  
+	           		<h:outputText value="#{savingsTxn.display}" />  
+	     		</p:column> 
+	     		<p:column headerText="Debit">  
+	           		<h:outputText value="#{savingsTxn.amount}" styleClass="debit-display" rendered="#{savingsTxn.drCr eq 'D'}" >  
+	           			<f:convertNumber currencySymbol="$" type="currency" />  
+	           		</h:outputText>
+	     		</p:column> 
+	     		<p:column  headerText="Credit">  
+	           		<h:outputText value="#{savingsTxn.amount}" styleClass="credit-display" rendered="#{savingsTxn.drCr eq 'C'}" > 
+	           			<f:convertNumber currencySymbol="$" type="currency" /> 
+	           		</h:outputText> 
+	     		</p:column> 
+	     		<p:column sortBy="#{savingsTxn.txnDt}" headerText="Transaction Date">  
+	           		<h:outputText value="#{savingsTxn.txnDt}" >  
+	           			<f:convertDateTime pattern="EEEEEEEE, MMM dd, yyyy" />
+	           		</h:outputText>
+	     		</p:column> 
+	     		<p:column  headerText="Running Balance" rendered="#{savingsDetailMVC.useAllDates and savingsDetailMVC.selectedSavingsTxnQueryType eq 'ALL'}">  
+	           		<h:outputText value="#{savingsTxn.runningAcctBalance}"
+	           		             rendered="#{savingsDetailMVC.useAllDates and savingsDetailMVC.selectedSavingsTxnQueryType eq 'ALL'}" >  
+	           			<f:convertNumber currencySymbol="$" type="currency" /> 
+	           		</h:outputText> 
+	     		</p:column>	     		
+               
+           </p:dataTable> 
+           <p:dialog id="dialogB" header="Savings Transaction Detail" widgetVar="savingsTxnDialog" resizable="false"  
+           		showEffect="fade" hideEffect="explode"> 
+           	  <h:panelGrid columns="2" cellpadding="2"> 
+           	  	<h:outputLabel styleClass="userEntry-label" id="txntypeLblB" for="txntypeB" value="Transaction Type:"  />
+                <h:outputText styleClass="singleresult-display" disabled="true"  id="txntypeB" value="#{savingsDetailMVC.txntypeDesc}"  />  
+                <h:outputLabel styleClass="userEntry-label" id="statusLblB" for="statusB" value="Status:"  />
+                <h:outputText styleClass="singleresult-display" disabled="true"  id="statusB" value="#{savingsDetailMVC.statusDesc}"  />  
+           		<h:outputLabel styleClass="userEntry-label" id="amountLblB" for="amountB" value="Amount:"  />
+                <h:outputText styleClass="singleresult-display" disabled="true"  id="amountB" value="#{savingsDetailMVC.selectedTxn.amount}"   > 
+                	<f:convertNumber currencySymbol="$" type="currency" />  
+                </h:outputText>  
+                <h:outputLabel  styleClass="userEntry-label" id="drcrLblB" for="drcrB" value="Accounting Entry:"  />
+                <h:outputText styleClass="singleresult-display" disabled="true"  id="drcrB" value="#{savingsDetailMVC.drcrDesc}"  />    
+           		<h:outputLabel styleClass="userEntry-label" id="transferAcctInfoLblB" for="transferAcctInfoB" value="Transfer Account:" rendered="#{savingsDetailMVC.transferFlag}" />
+           		<h:outputText styleClass="singleresult-display" id="transferAcctInfoB" value="#{savingsDetailMVC.offsetAcctInfo}" rendered="#{savingsDetailMVC.transferFlag}" disabled="true" />
+                <h:outputLabel styleClass="userEntry-label" id="txnDtLblB" for="txnDtB" value="Transaction Date:" />
+                <h:outputText styleClass="singleresult-display"   id="txnDtB" value="#{savingsDetailMVC.selectedTxn.txnDt}"  disabled="true" >
+                  	<f:convertDateTime pattern="EEEEEEEE, MMM dd, yyyy" />
+                </h:outputText>
+                <h:outputLabel styleClass="userEntry-label" id="dtChangedLblB" for="dtChangedB" value="Date Last Changed:" />
+                <h:outputText styleClass="singleresult-display"  id="dtChangedB" value="#{savingsDetailMVC.selectedTxn.dtChanged}" disabled="true" > 
+                   	<f:convertDateTime pattern="EEEEEEEE, MMM dd, yyyy" />
+                </h:outputText>
+                <h:outputLabel styleClass="userEntry-label" id="updatedByLblB" for="updatedByB" value="Updated By:" />
+                <h:outputText styleClass="singleresult-display"  id="updatedByB" value="#{savingsDetailMVC.selectedTxn.updatedBy}" disabled="true" />            		
+    			<p:commandButton styleClass="button-display" id="reversButtonB" value="Reverse Transaction" rendered="#{(savingsDetailMVC.selectedTxn.savingsTxnType ne 'O') and
+           										 			(savingsDetailMVC.selectedTxn.savingsTxnType ne 'I') and 
+           													( (savingsDetailMVC.offsetAcctInfo eq 'Cash') or
+           		                                        	((savingsDetailMVC.offsetTxnType ne 'O') and (savingsDetailMVC.offsetTxnType ne 'P')) )
+           										  				and (!savingsDetailMVC.selectedTxn.reversed)}"
+           		                                		 actionListener="#{savingsDetailMVC.reverseSavingsTxn}" process=":form"
+           		                  						update=":form"
+           		                  						oncomplete="handleSavingsReverseRequest()"
+           		                                       />
+              </h:panelGrid>
+           </p:dialog> 
+           <h:panelGrid id="savingsTxnButton" styleClass="userDoRange-display" columns="3" cellpadding="0" rendered="#{currentScreenInfo.isthereSavings()}"> 
+           		<f:facet name="header">
+        			<h:outputText styleClass="userDoRange-header" value="Create a New Transaction"/>
+    			</f:facet>
+           		<h:outputLabel id="savingsTxnTypesLbl" for="savingsTxnTypes" value="Transaction Type:"/>
+  				<h:selectOneMenu id="savingsTxnTypes" value="#{savingsDetailMVC.selectedSavingsTxnType}" >
+   					<f:selectItems value="#{savingsDetailMVC.savingsTxnTypesMap}" />
+   				</h:selectOneMenu>
+   				<p:commandButton  id="viewButtonSavingsTxn" value="Go"  process="savingsTxnButton"
+                            action="#{savingsDetailMVC.doNewSavingsTxnScreen()}"/> 
+           </h:panelGrid> 
+          <h:panelGrid columns="1" styleClass="singleresult-display" cellpadding="2" rendered="#{currentScreenInfo.isthereSavings()}"> 
+           		<p:commandButton styleClass="button-display" id="goAcctSumB" value="Return to Portfolio Holdings"  action="#{tabNavigator.goToAccountSummary}" />  
+           </h:panelGrid>
+           <h:panelGrid  cellpadding="1">
+             <h:outputText value="" />
+             <p:commandLink styleClass="commandlink-display" id="gicHelp" value="Screen Guidance"  
+                           rendered="#{currentScreenInfo.isthereGic()}" onclick="dlgH.show()" /> 
+             <h:outputText value="" />
+           </h:panelGrid>
+           <h:panelGrid styleClass="pageheader-display" columns="1" cellpadding="3" rendered="#{currentScreenInfo.isthereGic()}"> 
+                <h:outputText  
+                    value="GIC/Term Deposit Account Detail Information" />  
+            </h:panelGrid> 
+           
+           <h:panelGrid columns="4" cellpadding="2" rendered="#{currentScreenInfo.isthereGic()}"  > 
+           		<h:outputLabel styleClass="userEntry-label"  value="Account Name:" />
+                <h:outputText styleClass="singleresult-display" value="#{GICDetailMVC.gic.accountName}" disabled="true" /> 
+                <h:outputLabel styleClass="userEntry-label"  value="Account No.:"/>
+                <h:outputText styleClass="singleresult-display" value="#{GICDetailMVC.gic.accountNo}" disabled="true" /> 
+                <h:outputLabel styleClass="userEntry-label" value="Registered?"  />
+                <h:selectBooleanCheckbox  value="#{GICDetailMVC.gic.registered}" disabled="true" />
+                <h:outputLabel styleClass="userEntry-label" value="Joint?"  />
+                <h:selectBooleanCheckbox  value="#{GICDetailMVC.gic.joint}" disabled="true" />
+                <h:outputLabel styleClass="userEntry-label" value="Cashable?"  />
+    			<h:selectBooleanCheckbox  value="#{GICDetailMVC.gic.cashable}" disabled="true" />
+    			<h:outputLabel styleClass="userEntry-label"  value="Current Balance:"/>
+                <h:outputText styleClass="singleresult-display"  value="#{GICDetailMVC.gic.balance}" disabled="true" > 
+                	<f:convertNumber currencySymbol="$" type="currency" /> 
+                </h:outputText>
+      			<h:outputLabel styleClass="userEntry-label" value="Open Date:"/>
+                <h:outputText styleClass="singleresult-display" value="#{GICDetailMVC.gic.openDt}" disabled="true" > 
+                	<f:convertDateTime pattern="EEEEEEEE, MMM dd, yyyy" />
+                </h:outputText>
+        		<h:outputLabel styleClass="userEntry-label"  value="Maturity Date:"/>
+                <h:outputText styleClass="singleresult-display" value="#{GICDetailMVC.gic.maturityDt}" disabled="true" > 
+                	<f:convertDateTime pattern="EEEEEEEE, MMM dd, yyyy" /> 
+                </h:outputText>
+           		<h:outputLabel styleClass="userEntry-label"  value="Interest Rate:"/>
+                <h:outputText styleClass="singleresult-display" value="#{GICDetailMVC.interestRatePct / 100.0}" disabled="true" > 
+                	<f:convertNumber pattern="##0.00%"  />
+                </h:outputText>
+                <h:outputLabel styleClass="userEntry-label" value="Interest Compounded:"  />
+    			<h:outputText styleClass="singleresult-display" value="#{GICDetailMVC.intCompFreqDesc}" disabled="true" /> 
+            	<h:outputLabel styleClass="userEntry-label"  value="Maturity Value:"/>
+                <h:outputText styleClass="singleresult-display" value="#{GICDetailMVC.gicMaturityValue}" disabled="true" > 
+                	<f:convertNumber currencySymbol="$" type="currency" />  
+                </h:outputText>
+               	<h:outputLabel styleClass="userEntry-label" value="Pay Out At Maturity To:"/>
+                <h:outputText styleClass="singleresult-display"  value="#{GICDetailMVC.payAcctDesc}" disabled="true" />                                                                                                                                   
+            </h:panelGrid>
+        	<h:panelGrid columns="4" styleClass="userDoRange-display" cellpadding="0" id="txnListGrpC" rendered="#{currentScreenInfo.isthereGic()}" >
+            	<f:facet name="header">
+        			<h:outputText styleClass="userDoRange-header" value="Account Transaction Activity Selection Criteria"/>
+    			</f:facet>            	
+ 		    	<h:outputText value="Use All Dates? (un-check to use date range)" rendered="#{currentScreenInfo.isthereGic() and GICDetailMVC.useAllDates}" />
+ 		    	<h:outputText value="Use All Dates?" rendered="#{currentScreenInfo.isthereGic() and !GICDetailMVC.useAllDates}" /> 
+ 		   		<p:selectBooleanCheckbox id="useAllDatesC" value="#{GICDetailMVC.useAllDates}" rendered="#{currentScreenInfo.isthereGic()}" > 
+ 		   			<p:ajax  update="txnListGrpC" />
+ 		   		</p:selectBooleanCheckbox>
+ 		   		<h:outputText value=" " rendered="#{currentScreenInfo.isthereGic()}" /> 
+ 		   		<h:outputText value=" " rendered="#{currentScreenInfo.isthereGic()}" /> 
+				<h:outputText value="Date Range: " rendered="#{currentScreenInfo.isthereGic() and !GICDetailMVC.useAllDates}" />          
+				<p:calendar id="txnDtMinC"  navigator="true" yearRange="c-120:c+80" value="#{GICDetailMVC.txnDtMin}" 
+								effect="slideDown" pattern="dd-MMM-yyyy"
+							rendered="#{currentScreenInfo.isthereGic() and !GICDetailMVC.useAllDates}"
+							converterMessage="Date must be in valid format" />
+				<h:outputText value=" To " rendered="#{currentScreenInfo.isthereGic() and !GICDetailMVC.useAllDates}" /> 
+				<p:calendar id="txnDtMaxC"  navigator="true" yearRange="c-120:c+80" value="#{GICDetailMVC.txnDtMax}" 
+								effect="slideDown" pattern="dd-MMM-yyyy"
+					    	rendered="#{currentScreenInfo.isthereGic() and !GICDetailMVC.useAllDates}"
+							converterMessage="Date must be in valid format" />
+				<h:outputText value="Transaction Type:" rendered="#{currentScreenInfo.isthereGic()}" /> 
+				<h:selectOneMenu id="gicTxnQueryTypes" value="#{GICDetailMVC.selectedGICTxnQueryType}" >
+   					<f:selectItems value="#{GICDetailMVC.gicTxnTypesQueryMap}" />
+   				</h:selectOneMenu>
+				<h:outputText value=" " rendered="#{currentScreenInfo.isthereGic()}" /> 
+				<h:outputText value=" " rendered="#{currentScreenInfo.isthereGic()}" /> 
+           		<h:commandButton styleClass="button-display" id="txnListGetC" value="View"  >
+           			<f:ajax event="click" execute="txnListGrpC" render="@form" listener="#{GICDetailMVC.retrieveTxnList}" />  
+           		</h:commandButton> 
+   		   </h:panelGrid>      
+           <p:dataTable id="gicTxnTable" var="gicTxn" value="#{GICDetailMVC.txnList}"
+               rows="15" paginator="true" paginatorPosition="bottom" styleClass="dataTable-display"
+               rowKey="#{gicTxn.txnId}"  selection="#{GICDetailMVC.selectedTxn}" selectionMode="single" 
+                 rendered="#{currentScreenInfo.isthereGic()}" > 
+                <p:ajax event="rowSelect" listener="#{GICDetailMVC.onRowSelect}" update=":form" oncomplete="GicTxnDialog.show()" /> 
+                <p:ajax event="rowUnselect"  update=":form"/>       
+        		<f:facet name="header">  
+          			 Account Transaction Activity <br> (click a record to see detail) </br>
+        		</f:facet> 
+        		<p:column sortBy="#{gicTxn.display}" headerText="Type">  
+	           		<h:outputText value="#{gicTxn.display}" />  
+	     		</p:column> 
+	     		<p:column headerText="Debit">  
+	           		<h:outputText value="#{gicTxn.amount}" styleClass="debit-display" rendered="#{gicTxn.drCr eq 'D'}" >
+	           			<f:convertNumber currencySymbol="$" type="currency" />  
+	           		</h:outputText> 
+	     		</p:column> 
+	     		<p:column  headerText="Credit">  
+	           		<h:outputText value="#{gicTxn.amount}" styleClass="credit-display"  rendered="#{gicTxn.drCr eq 'C'}" >
+	           			<f:convertNumber currencySymbol="$" type="currency" />  
+	           		</h:outputText> 
+	     		</p:column> 	     		
+	     		<p:column sortBy="#{gicTxn.txnDt}" headerText="Transaction Date">  
+	           		<h:outputText value="#{gicTxn.txnDt}" >  
+	           			<f:convertDateTime pattern="EEEEEEEE, MMM dd, yyyy" />
+	           		</h:outputText>
+	     		</p:column> 
+	     		<p:column  headerText="Running Balance" rendered="#{GICDetailMVC.useAllDates and GICDetailMVC.selectedGICTxnQueryType eq 'ALL'}">  
+	           		<h:outputText value="#{gicTxn.runningAcctBalance}" 
+	           		               rendered="#{GICDetailMVC.useAllDates and GICDetailMVC.selectedGICTxnQueryType eq 'ALL'}">  
+	           			<f:convertNumber currencySymbol="$" type="currency" /> 
+	           		</h:outputText> 
+	     		</p:column>	     		
+                 
+           </p:dataTable> 
+           <p:dialog id="dialogC" header="GIC/Term Deposit Transaction Detail" widgetVar="GicTxnDialog" resizable="false"  
+           		showEffect="fade" hideEffect="explode"> 
+           	  <h:panelGrid columns="2" cellpadding="2"> 
+           	  	<h:outputLabel styleClass="userEntry-label" id="txntypeLblC" for="txntypeC" value="Transaction Type:"  />
+                <h:outputText styleClass="singleresult-display" disabled="true"  id="txntypeC" value="#{GICDetailMVC.txntypeDesc}"  />  
+                <h:outputLabel styleClass="userEntry-label" id="statusLblC" for="statusC" value="Status:"  />
+                <h:outputText styleClass="singleresult-display" disabled="true"  id="statusC" value="#{GICDetailMVC.statusDesc}"  />  
+           		<h:outputLabel styleClass="userEntry-label" id="amountLblC" for="amountC" value="Amount:"  />
+                <h:outputText styleClass="singleresult-display" disabled="true"  id="amountC" value="#{GICDetailMVC.selectedTxn.amount}"   > 
+                	<f:convertNumber currencySymbol="$" type="currency" />  
+                </h:outputText>  
+                <h:outputLabel styleClass="userEntry-label" id="drcrLblC" for="drcrC" value="Accounting Entry:"  />
+                <h:outputText styleClass="singleresult-display" disabled="true"  id="drcrC" value="#{GICDetailMVC.drcrDesc}"  />    
+           		<h:outputLabel styleClass="userEntry-label" id="transferAcctInfoLblC" for="transferAcctInfoC" value="Transfer Account:" />
+           		<h:outputText styleClass="singleresult-display" id="transferAcctInfoC" value="#{GICDetailMVC.offsetAcctInfo}"  disabled="true" />
+                <h:outputLabel styleClass="userEntry-label" id="txnDtLblC" for="txnDtC" value="Transaction Date:" />
+                <h:outputText styleClass="singleresult-display"   id="txnDtC" value="#{GICDetailMVC.selectedTxn.txnDt}"  disabled="true" >
+                  	<f:convertDateTime pattern="EEEEEEEE, MMM dd, yyyy" />
+                </h:outputText>
+                <h:outputLabel styleClass="userEntry-label" id="dtChangedLblC" for="dtChangedC" value="Date Last Changed:" />
+                <h:outputText styleClass="singleresult-display"  id="dtChangedC" value="#{GICDetailMVC.selectedTxn.dtChanged}" disabled="true" > 
+                   	<f:convertDateTime pattern="EEEEEEEE, MMM dd, yyyy" />
+                </h:outputText>
+                <h:outputLabel styleClass="userEntry-label" id="updatedByLblC" for="updatedByC" value="Updated By:" />
+                <h:outputText styleClass="singleresult-display"  id="updatedByC" value="#{GICDetailMVC.selectedTxn.updatedBy}" disabled="true" /> 
+   				<p:commandButton styleClass="button-display" id="reversButtonC" value="Reverse Transaction" 
+   														rendered="#{(GICDetailMVC.selectedTxn.gicTxnType ne 'O') and (!GICDetailMVC.selectedTxn.reversed)}"
+           		                                 actionListener="#{GICDetailMVC.reverseGicTxn}" process=":form"
+           		                  					update=":form"
+           		                  					oncomplete="handleGicReverseRequest()"
+           		                                       />               
+              </h:panelGrid>
+           </p:dialog> 
+           <h:panelGrid columns="3" styleClass="userDoRange-display" cellpadding="10" rendered="#{currentScreenInfo.isthereGic()}"> 
+           		<f:facet name="header">
+        			<h:outputText styleClass="userDoRange-header" value="Create a New Transaction"/>
+    			</f:facet> 
+           		<h:outputLabel id="gicTxnTypesLbl" for="gicTxnTypes" value="Transaction Type:"/>
+  				<h:selectOneMenu id="gicTxnTypes" value="#{GICDetailMVC.selectedGICTxnType}" >
+   					<f:selectItems value="#{GICDetailMVC.gicTxnTypesMap}" />
+   				</h:selectOneMenu>
+   				<h:commandButton  id="viewButtonNewGicTxn" value="Go"  
+                            action="#{GICDetailMVC.doNewGICTxnScreen()}"/> 
+           </h:panelGrid>
+          <h:panelGrid columns="1" cellpadding="2" styleClass="singleresult-display" rendered="#{currentScreenInfo.isthereGic()}"> 
+           		<p:commandButton id="goAcctSumC" value="Return to Portfolio Holdings"  action="#{tabNavigator.goToAccountSummary}" />  
+           </h:panelGrid>
+           <h:panelGrid  cellpadding="1">
+             <h:outputText value="" />
+             <p:commandLink styleClass="commandlink-display" id="stockHelp" value="Screen Guidance"  
+                           rendered="#{currentScreenInfo.isthereStock()}" onclick="dlgH.show()" /> 
+             <h:outputText value="" />
+           </h:panelGrid>
+           <h:panelGrid styleClass="pageheader-display" columns="1" cellpadding="3" rendered="#{currentScreenInfo.isthereStock()}"> 
+           <h:outputText  
+               value="Stock Account Detail Information" />  
+           </h:panelGrid> 
+           
+           <h:panelGrid columns="4" cellpadding="2" rendered="#{currentScreenInfo.isthereStock()}"  > 
+           		<h:outputLabel styleClass="userEntry-label" value="Account Name:" />
+                <h:outputText styleClass="singleresult-display" value="#{stockDetailMVC.stock.accountName}" disabled="true" /> 
+                <h:outputLabel styleClass="userEntry-label"  value="Account No.:"/>
+                <h:outputText styleClass="singleresult-display" value="#{stockDetailMVC.stock.accountNo}" disabled="true" /> 
+                <h:outputLabel styleClass="userEntry-label" value="Registered?"  />
+                <h:selectBooleanCheckbox  value="#{stockDetailMVC.stock.registered}" disabled="true" />
+                <h:outputLabel styleClass="userEntry-label" value="Joint?"  />
+                <h:selectBooleanCheckbox  value="#{stockDetailMVC.stock.joint}" disabled="true" />
+        		<h:outputLabel styleClass="userEntry-label" value="Stock Symbol:"/>
+                <h:outputText styleClass="singleresult-display"  value="#{stockDetailMVC.stock.symbol}" disabled="true" />  
+        		<h:outputLabel styleClass="userEntry-label" value="Company Name:"/>
+                <h:outputText styleClass="singleresult-display"  value="#{stockDetailMVC.stockInfo.name}" disabled="true" />        
+      			<h:outputLabel styleClass="userEntry-label" value="Account Open Date:"/>
+                <h:outputText styleClass="singleresult-display"  value="#{stockDetailMVC.stock.openDt}" disabled="true" > 
+                	<f:convertDateTime pattern="EEEEEEEE, MMM dd, yyyy" />
+                </h:outputText>                 
+        		<h:outputLabel styleClass="userEntry-label"  value="No. of Shares:"/>
+                <h:outputText styleClass="singleresult-display" value="#{stockDetailMVC.numShares}" disabled="true" />  
+           		<h:outputLabel styleClass="userEntry-label"  value="Current Price Per Share (Yahoo Ticker):"/>
+                <h:outputText styleClass="singleresult-display"  value="#{stockDetailMVC.curSharePrice}" disabled="true" > 
+                	<f:convertNumber currencyCode="#{stockDetailMVC.stockInfo.currency}" type="currency" /> 
+                </h:outputText>  
+            	<h:outputLabel styleClass="userEntry-label"  value="Market Value:"/>
+                <h:outputText styleClass="singleresult-display"  value="#{stockDetailMVC.marketValue}" disabled="true" > 
+                	<f:convertNumber currencyCode="#{stockDetailMVC.stockInfo.currency}" type="currency" /> 
+                </h:outputText>  
+               	<h:outputLabel styleClass="userEntry-label"  value="Average Cost Base:"/>
+                <h:outputText styleClass="singleresult-display"  value="#{stockDetailMVC.averageCostBase}" disabled="true" >   
+                	<f:convertNumber currencyCode="#{stockDetailMVC.stockInfo.currency}" type="currency" />   
+                </h:outputText> 
+        		<h:outputLabel styleClass="userEntry-label" value="Stock Exchange:"/>
+                <h:outputText styleClass="singleresult-display" value="#{stockDetailMVC.stockInfo.stockExchange}" disabled="true" />  
+        		<h:outputLabel styleClass="userEntry-label" value="Price Range for Year (Yahoo):"/>
+                <h:outputText styleClass="singleresult-display"  value="#{stockDetailMVC.stockInfo.yearRange}" disabled="true" />
+        		<h:outputLabel styleClass="userEntry-label"  value="Currency for Stock:"/>
+                <h:outputText styleClass="singleresult-display"  value="#{stockDetailMVC.stockInfo.currency}" disabled="true" />  
+                                                                                                                              
+            </h:panelGrid>   
+                 <h:panelGrid columns="4" styleClass="userDoRange-display" cellpadding="0" id="txnListGrpD" rendered="#{currentScreenInfo.isthereStock()}" >
+            	<f:facet name="header">
+        			<h:outputText styleClass="userDoRange-header" value="Account Transaction Activity Selection Criteria"/>
+    			</f:facet>            	
+ 		    	<h:outputText value="Use All Dates? (un-check to use date range)" rendered="#{currentScreenInfo.isthereStock() and stockDetailMVC.useAllDates}" />
+ 		    	<h:outputText value="Use All Dates?" rendered="#{currentScreenInfo.isthereStock() and !stockDetailMVC.useAllDates}" /> 
+ 		   		<p:selectBooleanCheckbox id="useAllDatesD" value="#{stockDetailMVC.useAllDates}" rendered="#{currentScreenInfo.isthereStock()}" > 
+ 		   			<p:ajax  update="txnListGrpD" />
+ 		   		</p:selectBooleanCheckbox>
+ 		   		<h:outputText value=" " rendered="#{currentScreenInfo.isthereStock()}" /> 
+ 		   		<h:outputText value=" " rendered="#{currentScreenInfo.isthereStock()}" /> 
+				<h:outputText value="Date Range: " rendered="#{currentScreenInfo.isthereStock() and !stockDetailMVC.useAllDates}" />          
+				<p:calendar id="txnDtMinD"  navigator="true" yearRange="c-120:c+80" value="#{stockDetailMVC.txnDtMin}" 
+								effect="slideDown" pattern="dd-MMM-yyyy"
+							rendered="#{currentScreenInfo.isthereStock() and !stockDetailMVC.useAllDates}"
+							converterMessage="Date must be in valid format" />
+				<h:outputText value=" To " rendered="#{currentScreenInfo.isthereStock() and !stockDetailMVC.useAllDates}" /> 
+				<p:calendar id="txnDtMaxD"  navigator="true" yearRange="c-120:c+80" value="#{stockDetailMVC.txnDtMax}" 
+								effect="slideDown" pattern="dd-MMM-yyyy"
+					    	rendered="#{currentScreenInfo.isthereStock() and !stockDetailMVC.useAllDates}"
+							converterMessage="Date must be in valid format" />
+				<h:outputText value="Transaction Type:" rendered="#{currentScreenInfo.isthereStock()}" /> 
+				<h:selectOneMenu id="stockTxnQueryTypes" value="#{stockDetailMVC.selectedStockTxnQueryType}" >
+   					<f:selectItems value="#{stockDetailMVC.stockTxnTypesQueryMap}" />
+   				</h:selectOneMenu>
+				<h:outputText value=" " rendered="#{currentScreenInfo.isthereStock()}" /> 
+				<h:outputText value=" " rendered="#{currentScreenInfo.isthereStock()}" /> 
+           		<h:commandButton id="txnListGetD" value="View"  >
+           			<f:ajax event="click" execute="txnListGrpD" render="@form" listener="#{stockDetailMVC.retrieveTxnList}" />  
+           		</h:commandButton> 
+   		   </h:panelGrid> 
+           <p:dataTable id="stockTxnTable" var="stockTxn" value="#{stockDetailMVC.txnList}"
+               rows="15" paginator="true" paginatorPosition="bottom" styleClass="dataTable-display"
+               rowKey="#{stockTxn.txnId}"  selection="#{stockDetailMVC.selectedTxn}" selectionMode="single" 
+                 rendered="#{currentScreenInfo.isthereStock()}" > 
+                <p:ajax event="rowSelect" listener="#{stockDetailMVC.onRowSelect}" update=":form" oncomplete="stockTxnDialog.show()" /> 
+                <p:ajax event="rowUnselect"  update=":form"/>                 
+        		<f:facet name="header">  
+          			 Account Transaction Activity <br> (click a record to see detail) </br>
+        		</f:facet> 
+        		<p:column sortBy="#{stockTxn.display}" headerText="Type">  
+	           		<h:outputText value="#{stockTxn.display}" />  
+	     		</p:column> 
+	     		<p:column headerText="Debit (#shares)">  
+	           		<h:outputText value="#{stockTxn.units}" styleClass="debit-display" rendered="#{stockTxn.drCr eq 'D'}" />  
+	     		</p:column> 
+	     		<p:column  headerText="Credit (#shares)">  
+	           		<h:outputText value="#{stockTxn.units}" styleClass="credit-display" rendered="#{stockTxn.drCr eq 'C'}" />  
+	     		</p:column> 	     		
+	     		<p:column sortBy="#{stockTxn.txnDt}" headerText="Transaction Date">  
+	           		<h:outputText value="#{stockTxn.txnDt}" > 
+	           			<f:convertDateTime pattern="EEEEEEEE, MMM dd, yyyy" /> 
+	           		</h:outputText> 
+	     		</p:column> 
+				<p:column  headerText="Running Units" rendered="#{stockDetailMVC.useAllDates and stockDetailMVC.selectedStockTxnQueryType eq 'ALL'}">  
+	           		<h:outputText value="#{stockTxn.runningUnits}"
+	           			rendered="#{stockDetailMVC.useAllDates and stockDetailMVC.selectedStockTxnQueryType eq 'ALL'}" />  
+	     		</p:column>	 
+           </p:dataTable> 
+           <p:dialog id="dialogD" header="Stock Transaction Detail" widgetVar="stockTxnDialog" resizable="false"  
+           		showEffect="fade" hideEffect="explode"> 
+           	  <h:panelGrid columns="2" cellpadding="2"> 
+           	  	<h:outputLabel styleClass="userEntry-label"  id="txntypeLblD" for="txntypeD" value="Transaction Type:"  />
+                <h:outputText styleClass="singleresult-display" disabled="true"  id="txntypeD" value="#{stockDetailMVC.txntypeDesc}"  />  
+                <h:outputLabel styleClass="userEntry-label"  id="statusLblD" for="statusD" value="Status:"  />
+                <h:outputText styleClass="singleresult-display" disabled="true"  id="statusD" value="#{stockDetailMVC.statusDesc}"  />   
+                <h:outputLabel styleClass="userEntry-label"  id="drcrLblD" for="drcrD" value="Accounting Entry:"  />
+                <h:outputText styleClass="singleresult-display" disabled="true"  id="drcrD" value="#{stockDetailMVC.drcrDesc}"  />  
+           		<h:outputLabel styleClass="userEntry-label"  id="unitsLblA" for="unitsA" value="No. Of Shares:"  />
+                <h:outputText styleClass="singleresult-display" disabled="true"  id="unitsA" value="#{stockDetailMVC.selectedTxn.units}"  /> 
+           		<h:outputLabel styleClass="userEntry-label"  id="priceLblA" for="priceA" value="Share Price:"  />
+                <h:outputText styleClass="singleresult-display" disabled="true"  id="priceA" value="#{stockDetailMVC.selectedTxn.price}" > 
+                	<f:convertNumber currencySymbol=" " type="currency" />  
+                </h:outputText> 
+           		<h:outputLabel styleClass="userEntry-label"  id="feeLblA" for="feeA" value="Transaction Fee:"  />
+                <h:outputText styleClass="singleresult-display" disabled="true"  id="feeA" value="#{stockDetailMVC.selectedTxn.fee}" > 
+                	<f:convertNumber currencySymbol=" " type="currency" />  
+                </h:outputText> 
+           		<h:outputLabel styleClass="userEntry-label"  id="acbForTxnLblA" for="acbForTxnA" value="Average Cost Base for Transaction:"  />
+                <h:outputText styleClass="singleresult-display" disabled="true"  id="acbForTxnA" value="#{stockDetailMVC.selectedTxn.acbForTxn}"  > 
+                	<f:convertNumber currencySymbol=" " type="currency" />  
+                </h:outputText> 
+           		<h:outputLabel styleClass="userEntry-label"  id="capitalGainLblA" for="capitalGainA" value="Capital Gain/Loss:" />
+                <h:outputText styleClass="singleresult-display" disabled="true"  id="capitalGainA" value="#{stockDetailMVC.selectedTxn.capitalGain}"  > 
+                	<f:convertNumber currencySymbol=" " type="currency" />  
+                </h:outputText>   
+           		<h:outputLabel styleClass="userEntry-label"  id="transferAcctInfoLblD" for="transferAcctInfoD" value="Transfer Account:"  />
+           		<h:outputText styleClass="singleresult-display" id="transferAcctInfoD" value="#{stockDetailMVC.offsetAcctInfo}" disabled="true" />
+                <h:outputLabel styleClass="userEntry-label"  id="txnDtLblD" for="txnDtD" value="Transaction Date:" />
+                <h:outputText styleClass="singleresult-display"   id="txnDtD" value="#{stockDetailMVC.selectedTxn.txnDt}"  disabled="true" >
+                  	<f:convertDateTime pattern="EEEEEEEE, MMM dd, yyyy" />
+                </h:outputText>
+                <h:outputLabel styleClass="userEntry-label"   value="Currency for Transaction:"/>
+                <h:outputText styleClass="singleresult-display"  value="#{stockDetailMVC.stockInfo.currency}" disabled="true" />  
+                <h:outputLabel styleClass="userEntry-label"  id="dtChangedLblD" for="dtChangedD" value="Date Last Changed:" />
+                <h:outputText styleClass="singleresult-display"  id="dtChangedD" value="#{stockDetailMVC.selectedTxn.dtChanged}" disabled="true" > 
+                   	<f:convertDateTime pattern="EEEEEEEE, MMM dd, yyyy" />
+                </h:outputText>
+                <h:outputLabel styleClass="userEntry-label"  id="updatedByLblD" for="updatedByD" value="Updated By:" />
+                <h:outputText styleClass="singleresult-display"  id="updatedByD" value="#{stockDetailMVC.selectedTxn.updatedBy}" disabled="true" /> 
+   				<p:commandButton styleClass="button-display" id="reversButtonD" value="Reverse Transaction" 
+   													rendered="#{(stockDetailMVC.selectedTxn.stockTxnType ne 'O') 
+           														and (!stockDetailMVC.selectedTxn.reversed) and stockDetailMVC.selTxnAfterLatestSell}" 
+           		                                 actionListener="#{stockDetailMVC.reverseStockTxn}" process=":form"
+           		                  					update=":form"
+           		                  					oncomplete="handleStockReverseRequest()"
+           		                                       />              
+              </h:panelGrid>
+           </p:dialog>        
+           <h:panelGrid columns="3" cellpadding="0" styleClass="userDoRange-display" rendered="#{currentScreenInfo.isthereStock()}"> 
+           		<f:facet name="header">
+        			<h:outputText styleClass="userDoRange-header" value="Create a New Transaction"/>
+    			</f:facet>
+           		<h:outputLabel id="stockTxnTypesLbl" for="stockTxnTypes" value="Transaction Type:"/>
+  				<h:selectOneMenu id="stockTxnTypes" value="#{stockDetailMVC.selectedStockTxnType}" >
+   					<f:selectItems value="#{stockDetailMVC.stockTxnTypesMap}" />
+   				</h:selectOneMenu>
+   				<h:commandButton  id="viewButtonNewStockTxn" value="Go"  
+                            action="#{stockDetailMVC.doNewStockTxnScreen()}"/> 
+           </h:panelGrid>
+          <h:panelGrid columns="1" styleClass="singleresult-display"  cellpadding="1" rendered="#{currentScreenInfo.isthereStock()}"> 
+           		<p:commandButton styleClass="button-display" id="goAcctSumD" value="Return to Portfolio Holdings"  action="#{tabNavigator.goToAccountSummary}" />  
+           </h:panelGrid>
+           <h:panelGrid  cellpadding="1">
+             <h:outputText value="" />
+             <p:commandLink styleClass="commandlink-display" id="annuityHelp" value="Screen Guidance"  
+                           rendered="#{currentScreenInfo.isthereAnnuity()}" onclick="dlgH.show()" /> 
+             <h:outputText value="" />
+           </h:panelGrid> 
+           <h:panelGrid styleClass="pageheader-display" columns="1" cellpadding="3" rendered="#{currentScreenInfo.isthereAnnuity()}"> 
+                <h:outputText  
+                    value="Annuity Account Detail Information" />  
+            </h:panelGrid>
+            
+           <h:panelGrid columns="4" cellpadding="2" rendered="#{currentScreenInfo.isthereAnnuity()}"  > 
+           		<h:outputLabel styleClass="userEntry-label" value="Account Name:" />
+                <h:outputText  styleClass="singleresult-display" value="#{annuityDetailMVC.annuity.accountName}" disabled="true" /> 
+                <h:outputLabel styleClass="userEntry-label" value="Account No.:"/>
+                <h:outputText  styleClass="singleresult-display" value="#{annuityDetailMVC.annuity.accountNo}" disabled="true" /> 
+                <h:outputLabel styleClass="userEntry-label"  value="Balance (PV):"/>
+                <h:outputText  styleClass="singleresult-display"  value="#{annuityDetailMVC.annuity.balance}" disabled="true" > 
+                	<f:convertNumber currencySymbol="$" type="currency" />  
+                </h:outputText>
+      			<h:outputLabel styleClass="userEntry-label" value="Open Date:"/>
+      			<h:outputText  styleClass="singleresult-display" value="#{annuityDetailMVC.annuity.openDt}" disabled="true" > 
+      				<f:convertDateTime pattern="EEEEEEEE, MMM dd, yyyy" />
+      			</h:outputText>
+                <h:outputLabel styleClass="userEntry-label" value="Registered?:"  />
+                <h:selectBooleanCheckbox  value="#{annuityDetailMVC.annuity.registered}" disabled="true" />
+                <h:outputLabel styleClass="userEntry-label" value="Joint?:"  />
+                <h:selectBooleanCheckbox  value="#{annuityDetailMVC.annuity.joint}" disabled="true" />
+                <h:outputLabel styleClass="userEntry-label" value="Term in Months:"  />
+    			<h:outputText  styleClass="singleresult-display" value="#{annuityDetailMVC.annuity.termMonths}" disabled="true" />
+                <h:outputLabel styleClass="userEntry-label" value="Periodic Payment:"  />
+    			<h:outputText  styleClass="singleresult-display"  value="#{annuityDetailMVC.annuity.periodicPayment}" disabled="true" >
+    				<f:convertNumber currencySymbol="$" type="currency" /> 
+    			</h:outputText> 
+                <h:outputLabel styleClass="userEntry-label" value="Payment Frequency:"  />
+    			<h:outputText  styleClass="singleresult-display"  value="#{annuityDetailMVC.payFreqDesc}" disabled="true" />
+                <h:outputLabel styleClass="userEntry-label" value="Interest Rate:"  />
+    			<h:outputText  styleClass="singleresult-display" value="#{annuityDetailMVC.interestRatePct / 100.0}" disabled="true" >
+    				<f:convertNumber pattern="##0.00%"  />
+    			</h:outputText>
+                <h:outputLabel styleClass="userEntry-label" value="Interest Compounded:"  />
+    			<h:outputText  styleClass="singleresult-display" value="#{annuityDetailMVC.intCompFreqDesc}" disabled="true" />
+               	<h:outputLabel styleClass="userEntry-label"  value="Annuity Payments To:"/>
+                <h:outputText  styleClass="singleresult-display" value="#{annuityDetailMVC.payAcctDesc}" disabled="true" />                                                                                                                                   
+            </h:panelGrid> 
+            <h:panelGrid columns="4" styleClass="userDoRange-display" cellpadding="0" id="txnListGrpE" rendered="#{currentScreenInfo.isthereAnnuity()}" >
+            	<f:facet name="header">
+        			<h:outputText styleClass="userDoRange-header" value="Account Transaction Activity Selection Criteria"/>
+    			</f:facet>            	
+ 		    	<h:outputText value="Use All Dates? (un-check to use date range)" rendered="#{currentScreenInfo.isthereAnnuity() and annuityDetailMVC.useAllDates}" />
+ 		    	<h:outputText value="Use All Dates?" rendered="#{currentScreenInfo.isthereAnnuity() and !annuityDetailMVC.useAllDates}" /> 
+ 		   		<p:selectBooleanCheckbox id="useAllDatesE" value="#{annuityDetailMVC.useAllDates}" rendered="#{currentScreenInfo.isthereAnnuity()}" > 
+ 		   			<p:ajax  update="txnListGrpE" />
+ 		   		</p:selectBooleanCheckbox>
+ 		   		<h:outputText value=" " rendered="#{currentScreenInfo.isthereAnnuity()}" /> 
+ 		   		<h:outputText value=" " rendered="#{currentScreenInfo.isthereAnnuity()}" /> 
+				<h:outputText value="Date Range: " rendered="#{currentScreenInfo.isthereAnnuity() and !annuityDetailMVC.useAllDates}" />          
+				<p:calendar id="txnDtMinE"  navigator="true" yearRange="c-120:c+80" value="#{annuityDetailMVC.txnDtMin}" 
+								effect="slideDown" pattern="dd-MMM-yyyy"
+							rendered="#{currentScreenInfo.isthereAnnuity() and !annuityDetailMVC.useAllDates}"
+							converterMessage="Date must be in valid format" />
+				<h:outputText value=" To " rendered="#{currentScreenInfo.isthereAnnuity() and !annuityDetailMVC.useAllDates}" /> 
+				<p:calendar id="txnDtMaxE"  navigator="true" yearRange="c-120:c+80" value="#{annuityDetailMVC.txnDtMax}" 
+								effect="slideDown" pattern="dd-MMM-yyyy"
+					    	rendered="#{currentScreenInfo.isthereAnnuity() and !annuityDetailMVC.useAllDates}"
+							converterMessage="Date must be in valid format" />
+				<h:outputText value="Transaction Type:" rendered="#{currentScreenInfo.isthereAnnuity()}" /> 
+				<h:selectOneMenu id="annuityTxnQueryTypes" value="#{annuityDetailMVC.selectedAnnuityTxnQueryType}" >
+   					<f:selectItems value="#{annuityDetailMVC.annuityTxnTypesQueryMap}" />
+   				</h:selectOneMenu>
+				<h:outputText value=" " rendered="#{currentScreenInfo.isthereAnnuity()}" /> 
+				<h:outputText value=" " rendered="#{currentScreenInfo.isthereAnnuity()}" /> 
+           		<h:commandButton id="txnListGetE" value="View"  >
+           			<f:ajax event="click" execute="txnListGrpE" render="@form" listener="#{annuityDetailMVC.retrieveTxnList}" />  
+           		</h:commandButton> 
+   		   </h:panelGrid> 
+           <p:dataTable id="annuityTxnTable" var="annuityTxn" value="#{annuityDetailMVC.txnList}"
+               rows="15" paginator="true" paginatorPosition="bottom" styleClass="dataTable-display"
+               rowKey="#{annuityTxn.txnId}"  selection="#{annuityDetailMVC.selectedTxn}" selectionMode="single" 
+                 rendered="#{currentScreenInfo.isthereAnnuity()}" > 
+                <p:ajax event="rowSelect" listener="#{annuityDetailMVC.onRowSelect}" update=":form" oncomplete="annuityTxnDialog.show()" /> 
+                <p:ajax event="rowUnselect"  update=":form"/>
+        		<f:facet name="header">  
+          			 Account Transaction Activity <br> (click a record to see detail) </br>
+        		</f:facet> 
+        		<p:column sortBy="#{annuityTxn.display}" headerText="Type">  
+	           		<h:outputText value="#{annuityTxn.display}" />  
+	     		</p:column> 
+	     		<p:column headerText="Debit">  
+	           		<h:outputText value="#{annuityTxn.amount}" styleClass="debit-display" rendered="#{annuityTxn.drCr eq 'D'}" > 
+	           			<f:convertNumber currencySymbol="$" type="currency" />   
+	           		</h:outputText>
+	     		</p:column> 
+	     		<p:column  headerText="Credit">  
+	           		<h:outputText value="#{annuityTxn.amount}" styleClass="credit-display" rendered="#{annuityTxn.drCr eq 'C'}" > 
+	           			<f:convertNumber currencySymbol="$" type="currency" />   
+	           		</h:outputText>
+	     		</p:column> 	     		
+	     		<p:column sortBy="#{annuityTxn.txnDt}" headerText="Transaction Date">  
+	           		<h:outputText value="#{annuityTxn.txnDt}" > 
+	           			<f:convertDateTime pattern="EEEEEEEE, MMM dd, yyyy" /> 
+	           		</h:outputText>	           		
+	     		</p:column>
+           </p:dataTable> 
+           <p:dialog id="dialogE" header="Annuity Transaction Detail" widgetVar="annuityTxnDialog" resizable="false"  
+           		showEffect="fade" hideEffect="explode"> 
+           	  <h:panelGrid columns="2" cellpadding="2"> 
+           	  	<h:outputLabel styleClass="userEntry-label" id="txntypeLblE" for="txntypeE" value="Transaction Type:"  />
+                <h:outputText styleClass="singleresult-display" disabled="true"  id="txntypeE" value="#{annuityDetailMVC.txntypeDesc}"  />  
+                <h:outputLabel styleClass="userEntry-label" id="statusLblE" for="statusE" value="Status:"  />
+                <h:outputText styleClass="singleresult-display" disabled="true"  id="statusE" value="#{annuityDetailMVC.statusDesc}"  />  
+           		<h:outputLabel styleClass="userEntry-label" id="amountLblE" for="amountE" value="Amount:"  />
+                <h:outputText styleClass="singleresult-display" disabled="true"  id="amountE" value="#{annuityDetailMVC.selectedTxn.amount}"   > 
+                	<f:convertNumber currencySymbol="$" type="currency" />  
+                </h:outputText>  
+                <h:outputLabel styleClass="userEntry-label" id="drcrLblE" for="drcrE" value="Accounting Entry:"  />
+                <h:outputText styleClass="singleresult-display" disabled="true"  id="drcrE" value="#{annuityDetailMVC.drcrDesc}"  />    
+           		<h:outputLabel styleClass="userEntry-label" id="transferAcctInfoLblE" for="transferAcctInfoE" value="Transfer Account:" />
+           		<h:outputText styleClass="singleresult-display" id="transferAcctInfoE" value="#{annuityDetailMVC.offsetAcctInfo}" disabled="true" />
+                <h:outputLabel styleClass="userEntry-label" id="txnDtLblE" for="txnDtE" value="Transaction Date:" />
+                <h:outputText styleClass="singleresult-display"   id="txnDtE" value="#{annuityDetailMVC.selectedTxn.txnDt}"  disabled="true" >
+                  	<f:convertDateTime pattern="EEEEEEEE, MMM dd, yyyy" />
+                </h:outputText>
+                <h:outputLabel styleClass="userEntry-label" id="dtChangedLblE" for="dtChangedE" value="Date Last Changed:" />
+                <h:outputText styleClass="singleresult-display"  id="dtChangedE" value="#{annuityDetailMVC.selectedTxn.dtChanged}" disabled="true" > 
+                   	<f:convertDateTime pattern="EEEEEEEE, MMM dd, yyyy" />
+                </h:outputText>
+                <h:outputLabel styleClass="userEntry-label" id="updatedByLblE" for="updatedByE" value="Updated By:" />
+                <h:outputText styleClass="singleresult-display"  id="updatedByE" value="#{annuityDetailMVC.selectedTxn.updatedBy}" disabled="true" /> 
+              </h:panelGrid>
+           </p:dialog>  
+          <h:panelGrid columns="1" styleClass="singleresult-display" cellpadding="5" rendered="#{currentScreenInfo.isthereAnnuity()}"> 
+           		<p:commandButton styleClass="button-display" id="goAcctSumE" value="Return to Portfolio Holdings"  action="#{tabNavigator.goToAccountSummary}" />  
+           </h:panelGrid>          
+        </p:tab>
+		<p:tab titleStyleClass="nav-menuTab" title="Add An Account" id="AddAccount"> 
+			<h:outputText  
+                    value="This is for adding an account." />  		
+        </p:tab>
+		<p:tab titleStyleClass="nav-menuTab" title="Sign Out" id="SignOut"> 	
+				<h:outputText  
+                    value="This is for client to sign out" />  		
+        </p:tab>
+    </p:tabView>  
+</h:form>
+<script type="text/javascript">
+function handleChequingReverseRequest() {
+	chequingTxnDialog.hide();
+}
+function handleSavingsReverseRequest() {
+	savingsTxnDialog.hide();
+}
+function handleGicReverseRequest() {
+	GicTxnDialog.hide();
+}
+function handleStockReverseRequest() {
+	stockTxnDialog.hide();
+}
+</script> 
+</h:body>
+</html>

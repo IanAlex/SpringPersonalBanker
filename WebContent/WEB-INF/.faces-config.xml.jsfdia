@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PROCESS model-entity="JSFProcess">
+ <PROCESS-ITEM NAME="rules:start.xhtml" PATH="start.xhtml"
+  SHAPE="32,17,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:start.xhtml:0" NAME="item" PATH="start.xhtml" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT ID="success::main.xhtml" NAME="output"
+    PATH="main.xhtml" TARGET="rules:main.xhtml" TITLE="success" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT ID="success::client-setup.xhtml" NAME="output1"
+    PATH="client-setup.xhtml" TARGET="rules:client-setup.xhtml"
+    TITLE="success" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules:main.xhtml" PATH="main.xhtml"
+  SHAPE="256,33,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules:client-setup.xhtml" PATH="client-setup.xhtml"
+  SHAPE="256,177,0,0" model-entity="JSFProcessGroup"/>
+</PROCESS>

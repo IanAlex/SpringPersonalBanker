@@ -1,0 +1,197 @@
+.userEntry-label{
+  background: rgb(247,247,247);
+  font-size: 15px;
+  font-weight: bold;
+  line-height: 22px;
+  margin-top: 15px;
+  width: 270px;
+  }
+  
+ .desc-display{ background: rgb(255,255,255 );
+  font-size: 15px;
+  font-weight: regular;
+  line-height: 19px; 
+  margin-top: 15px; 
+ }
+ 
+ .desc-header-display{
+ color: rgb(255,255,255 )  ! important;
+  background: rgb(61,89,171);
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 21px;
+  margin-top: 16px;
+  width: 600px;
+ }
+ 
+ .desc-miniheader-display{
+ color: rgb(113,113,198 )  ;
+  font-size: 15px;
+  font-weight: bold;
+  line-height: 20px;
+  margin-top: 15px;
+  width: 600px;
+ }
+  
+ .singleresult-display{
+  background: rgb(255,255,255 );
+  font-size: 15px;
+  font-weight: regular;
+  line-height: 22px;
+  margin-top: 15px;
+  width: 270px;
+ }
+ 
+ .errMessage-display{
+  color: rgb(220,20,60);
+  font-size: 15px;
+  font-weight: regular;
+  line-height: 22px;
+  margin-top: 15px;
+  width: 600px;
+ }
+ 
+ .singleresult-edit{
+  background: rgb(255,255,255 ) ! important;
+  font-size: 15px ! important;
+  font-weight: regular ! important;
+  line-height: 18px ! important;
+  margin-top: 12px ! important;
+  width: 270px ! important;
+ }
+ 
+ .button-display{
+  font-size: 15px ! important;
+  font-weight: regular ! important;
+  line-height: 22px ! important;
+  margin-top: 15px ! important;
+ }
+ 
+ .goodMessage-display{
+  oolor: rgb(0,205,0);
+  font-size: 18px;
+  font-weight: regular;
+  line-height: 22px;
+  margin-top: 15px;
+  width: 270px;
+  }
+ 
+ .commandlink-display{
+  color: rgb(58,95,205) ! important;
+  font-size: 15px;
+  font-weight: bold;
+  line-height: 22px;
+  margin-top: 15px;
+  width: 600px;
+ }
+ 
+ .pageheader-display{
+  color: rgb(255,255,255 )  ! important;
+  background: rgb(61,89,171);
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 26px;
+  margin-top: 18px;
+  width: 600px;
+ }
+ 
+ 
+ .userDoRange-display{
+  background: rgb(255,239,213 );
+  font-size: 15px;
+  font-weight: bold;
+  line-height: 22px;
+  margin-top: 15px;
+  width: 600px;
+ }
+ 
+ .userDoRange-header{
+  background: rgb(205,192,176 );
+  font-size: 17px;
+  font-weight: bold;
+  line-height: 22px;
+  margin-top: 15px;
+  width: 600px;
+ }
+ 
+ .userDoSavingRange-display{
+  background: rgb(255,239,213 );
+  font-size: 15px;
+  font-weight: bold;
+  line-height: 22px;
+  margin-top: 15px;
+  width: 600px;
+ }
+ 
+ .userDoSavingRange-header{
+  background: rgb(205,192,176 );
+  font-size: 17px;
+  font-weight: bold;
+  line-height: 22px;
+  margin-top: 15px;
+  width: 600px;
+ }
+ 
+ .debit-display{
+  color: rgb(69,139,0);
+  font-size: 15px;
+  font-weight: regular;
+  line-height: 22px;
+  margin-top: 15px;
+  width: 270px;
+ }
+ 
+ .credit-display{
+  color: rgb(176,23,31);
+  font-size: 15px;
+  font-weight: regular;
+  line-height: 22px;
+  margin-top: 15px;
+  width: 270px;
+ }
+ 
+ .dataTable-display{
+  background: rgb(240,248,255) ! important;
+  font-size: 15px ! important;
+  font-weight: regular ! important;
+  line-height: 22px ! important;
+  margin-top: 15px ! important;
+  width: 700px ! important;
+ }
+ 
+ .formEdit-backgrd{
+  background: rgb(227,227,227); 
+  width: 600px
+ }
+ 
+ .mainData-display{
+  background: rgb(240,248,255) ! important;
+  font-size: 15px ! important;
+  font-weight: regular ! important;
+  line-height: 22px ! important;
+  margin-top: 15px ! important;
+  width: 800px ! important;
+ }
+  
+.nav-menuTab{
+  color: rgb(255,255,255 )  ! important;
+  background: rgb(202,225,255) ;
+  font-size: 15px ! important;
+  font-weight: bold ! important;
+  line-height: 18px ! important;
+}
+
+.navChose-menuTab{
+  background: rgb(255,255,255 )  ! important;
+  font-size: 15px ! important;
+  font-weight: bold ! important;
+  line-height: 18px ! important;
+}
+
+.nav-wizTab{
+  color: rgb(255,255,255 )  ! important;
+  background: rgb(105,139,105) ! important;
+  font-size: 15px ! important;
+  font-weight: bold ! important;
+  line-height: 18px ! important;
+}

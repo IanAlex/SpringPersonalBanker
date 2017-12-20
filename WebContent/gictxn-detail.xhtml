@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+</h:head>
+<h:body>
+<h:outputStylesheet library="css" name="pbstyles.css"  />
+<h:form id="form">
+        	<h:panelGrid styleClass="pageheader-display" columns="1" cellpadding="0"> 
+                <h:outputText value="#{GICTxnDetailMVC.txnDesc1}" /> 
+                <h:outputText value="#{GICTxnDetailMVC.txnDesc2}" /> 
+            </h:panelGrid>  
+           <h:panelGrid styleClass="formEdit-backgrd" columns="3" cellpadding="2"> 
+           		<f:event listener="#{GICTxnDetailMVC.validateForTransfers}" type="postValidate" />           		
+           		<h:outputLabel id="amountLbl" styleClass="userEntry-label" for="amount" value="Amount*:" rendered="#{GICTxnDetailMVC.currentScreenInfo.newTxn}" />
+                <p:inputText id="amount" styleClass="singleresult-edit" value="#{GICTxnDetailMVC.viewGICTxn.amount}" rendered="#{GICTxnDetailMVC.currentScreenInfo.newTxn}"
+                 	required="#{GICTxnDetailMVC.currentScreenInfo.newTxn}"
+					requiredMessage="You must enter an Amount" 
+					converterMessage="Amount must be numeric"
+					validator="#{GICTxnDetailMVC.validateAmount}" >
+                </p:inputText>
+                <h:message styleClass="errMessage-display" for="amount" rendered="#{GICTxnDetailMVC.currentScreenInfo.newTxn}" />
+                <h:outputLabel id="txnDtLbl" styleClass="userEntry-label" for="txnDt" value="Transaction Date:" rendered="#{GICTxnDetailMVC.currentScreenInfo.newTxn}"/>
+                <p:calendar id="txnDt" styleClass="singleresult-edit" navigator="true" yearRange="c-120:c+80" value="#{GICTxnDetailMVC.viewGICTxn.txnDt}"  rendered="#{GICTxnDetailMVC.currentScreenInfo.newTxn}" 
+                				effect="slideDown" pattern="dd-MMM-yyyy"
+                	required="#{GICTxnDetailMVC.currentScreenInfo.newTxn}" 
+                	requiredMessage="You must enter a Transaction Date" 
+                	converterMessage="Transaction Date must be in valid format"
+                	validator="#{GICTxnDetailMVC.validateTransactionDt}" >
+                </p:calendar>
+                <h:message styleClass="errMessage-display" for="txnDt" rendered="#{GICTxnDetailMVC.currentScreenInfo.newTxn}"/>
+                <h:outputLabel id="transferAcctInfoLbl" styleClass="userEntry-label" for="transferAcctInfo" value="Transfer Account:" rendered="#{GICTxnDetailMVC.currentScreenInfo.newTxn}"/>
+                <h:selectOneMenu id="transferAcctInfo" styleClass="singleresult-edit" value="#{GICTxnDetailMVC.selectedTransferAcctInfo}" rendered="#{GICTxnDetailMVC.currentScreenInfo.newTxn}" >
+   					<f:selectItems value="#{GICTxnDetailMVC.transferAccountMap}" />
+   				</h:selectOneMenu>
+   				<h:message styleClass="errMessage-display" for="transferAcctInfo" rendered="#{GICTxnDetailMVC.currentScreenInfo.newTxn}" />
+           		<h:commandButton id="processButton" styleClass="button-display" value="Process"  
+                            action="#{GICTxnDetailMVC.processNewGICTxn()}" rendered="#{GICTxnDetailMVC.currentScreenInfo.newTxn}"/> 
+                <h:message for="processButton" rendered="#{GICTxnDetailMVC.currentScreenInfo.newTxn}"/> 
+                <h:commandButton value="Cancel" styleClass="button-display" action="#{GICTxnDetailMVC.cancel()}" >
+                	<f:ajax />
+                </h:commandButton>
+            </h:panelGrid>
+</h:form>
+</h:body>
+</html>

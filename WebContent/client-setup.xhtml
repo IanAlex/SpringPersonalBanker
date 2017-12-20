@@ -1,0 +1,257 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+</h:head>
+<h:body>
+<h:outputStylesheet library="css" name="pbstyles.css"  />
+<h:form id="form">
+
+	<p:growl id="growl" sticky="true" showDetail="true"/> 
+   <p:tabView id="tabView" dynamic="true">  
+   <p:ajax event="tabChange" listener="#{tabNavigator.onClientSetupPageTabChange}" update=":form:growl"/>
+	 <p:tab title="Client Set Up" titleStyleClass="nav-menuTab" id="AddClient">  
+		<p:wizard widgetVar="wiz" flowListener="#{clientSetUpMVC.onFlowProcess}"> 
+			<p:tab id="enterAddressInfo" titleStyleClass="nav-wizTab" title="Address">
+				<p:panel> 
+				    <h:panelGrid styleClass="pageheader-display" columns="1" cellpadding="2"   > 
+        				<h:outputText styleClass="outputLabel" disabled="true"  value="Enter Address Info" />
+        			</h:panelGrid>   
+					<h:panelGrid columns="3" cellpadding="2">
+						<h:outputText styleClass="userEntry-label" value="Street*:" /> 
+						<p:inputText id="streetName" styleClass="singleresult-edit" value="#{clientSetUpMVC.currentScreenInfo.wizAddress.street}" 
+								required="true"
+								requiredMessage="You must enter a Street" 
+								validatorMessage="Street cannot exceed 80 characters"> 
+							<f:validateLength  maximum="80"/>
+						</p:inputText>
+						<h:message styleClass="errMessage-display" for="streetName"/>
+						<h:outputText styleClass="userEntry-label" value="Apartment/Unit:" /> 
+						<p:inputText id="aptUnit" styleClass="singleresult-edit" value="#{clientSetUpMVC.currentScreenInfo.wizAddress.aptUnit}" 
+								required="false"
+								validatorMessage="Apartment/Unit cannot exceed 7 characters"> 
+							<f:validateLength  maximum="7"/>
+						</p:inputText>
+						<h:message styleClass="errMessage-display" for="aptUnit"/>	
+						<h:outputText styleClass="userEntry-label" value="City*:" /> 
+						<p:inputText id="city" styleClass="singleresult-edit" value="#{clientSetUpMVC.currentScreenInfo.wizAddress.city}" 
+								required="true"
+								requiredMessage="You must enter a City" 
+								validatorMessage="City cannot exceed 25 characters"> 
+							<f:validateLength  maximum="25"/>
+						</p:inputText>
+						<h:message styleClass="errMessage-display" for="city"/>
+						<h:outputText styleClass="userEntry-label" id="countriesLbl" value="Country:"  /> 
+						<h:selectOneMenu id="countries" styleClass="singleresult-edit" value="#{clientSetUpMVC.selectedCountry}"  >
+							<f:selectItems value="#{clientSetUpMVC.countryMap}" />
+							<f:ajax render="states"/>
+						</h:selectOneMenu>
+						<h:message styleClass="errMessage-display" for="countries" /> 
+						<h:outputText styleClass="userEntry-label" id="statesLbl" value="State/Province:"  /> 			
+						<h:selectOneMenu id="states" styleClass="singleresult-edit" value="#{clientSetUpMVC.selectedStateProv}" disabled="#{!clientSetUpMVC.stateProvFlag}" >
+							<f:selectItems value="#{clientSetUpMVC.stateProvMap}" />
+						</h:selectOneMenu>
+						<h:message styleClass="errMessage-display" for="states"  /> 	
+						<h:outputText styleClass="userEntry-label" value="Postal/Zip Code*:" /> 
+						<p:inputText id="postalZip" styleClass="singleresult-edit" value="#{clientSetUpMVC.currentScreenInfo.wizAddress.postalZip}" 
+								required="true"
+								requiredMessage="You must enter a Postal/Zip Code" 
+								validatorMessage="Postal/Zip Code cannot exceed 80 characters"> 
+							<f:validateLength  maximum="10"/>
+						</p:inputText>
+						<h:message styleClass="errMessage-display" for="postalZip"/>				
+					</h:panelGrid>
+				</p:panel>	
+			</p:tab>
+			<p:tab id="chooseClientType" titleStyleClass="nav-wizTab" title="Client Type">
+			  	<p:panel header="Choose Client Type">    			  		
+					<h:messages errorClass="error"/>
+					<h:panelGrid styleClass="pageheader-display" columns="1" cellpadding="2"   > 
+        				<h:outputText styleClass="outputLabel" disabled="true"  value="Choose Client Type" />
+        			</h:panelGrid>  
+					<h:panelGrid columns="2" cellpadding="2"> 
+						<h:outputText styleClass="userEntry-label" value="Choose Client Type:" /> 
+						<h:selectOneMenu id="clientTypes" styleClass="singleresult-edit" value="#{clientSetUpMVC.selectedClientType}" >
+							<f:selectItems value="#{clientSetUpMVC.clientTypesMap}" />
+						</h:selectOneMenu>
+					</h:panelGrid>	
+			  	</p:panel>			
+			</p:tab>
+			<p:tab id="enterClientInfo" titleStyleClass="nav-wizTab" title="Client Info">
+			  	<p:panel header="Client Info"> 
+			  		<h:panelGrid styleClass="pageheader-display" columns="1" cellpadding="2"   > 
+        				<h:outputText styleClass="outputLabel" disabled="true"  value="Enter Client Info" />
+        			</h:panelGrid>  
+					<h:panelGrid columns="3" cellpadding="2"> 
+						<h:outputText styleClass="userEntry-label" value="First Name*:" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}"  /> 
+						<p:inputText id="firstName" styleClass="singleresult-edit" value="#{clientSetUpMVC.currentScreenInfo.wizPerson.firstName}" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}"
+								required="true"
+								requiredMessage="You must enter a First Name" 
+								validatorMessage="First Name cannot exceed 30 characters"> 
+							<f:validateLength  maximum="30"/>
+						</p:inputText>
+						<h:message styleClass="errMessage-display" for="firstName" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}" />
+						<h:outputText styleClass="userEntry-label" value="Middle Name:" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}"  /> 
+						<p:inputText id="middleName" styleClass="singleresult-edit" value="#{clientSetUpMVC.currentScreenInfo.wizPerson.middleName}" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}"
+								validatorMessage="Middle Name cannot exceed 30 characters"> 
+							<f:validateLength  maximum="30"/>
+						</p:inputText>
+						<h:message styleClass="errMessage-display" for="middleName" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}" />
+						<h:outputText styleClass="userEntry-label" value="Last Name*:" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}"  /> 
+						<p:inputText id="lastName" styleClass="singleresult-edit" value="#{clientSetUpMVC.currentScreenInfo.wizPerson.lastName}" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}"
+								required="true"
+								requiredMessage="You must enter a Last Name" 
+								validatorMessage="Last Name cannot exceed 30 characters"> 
+							<f:validateLength  maximum="30"/>
+						</p:inputText>
+						<h:message styleClass="errMessage-display" for="lastName" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}" />
+						<h:outputText styleClass="userEntry-label" value="Name Prefix:" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}" /> 
+						<h:selectOneMenu id="namePrefix" styleClass="singleresult-edit" value="#{clientSetUpMVC.selectedNamePrefix}" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}" >
+							<f:selectItems value="#{clientSetUpMVC.namePrefixMap}" />
+						</h:selectOneMenu>
+						<h:message styleClass="errMessage-display" for="namePrefix" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}" />
+						<h:outputText styleClass="userEntry-label" value="Gender:" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}" /> 
+						<h:selectOneMenu id="gender" styleClass="singleresult-edit" value="#{clientSetUpMVC.selectedGender}" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}" >
+							<f:selectItems value="#{clientSetUpMVC.genderMap}" />
+						</h:selectOneMenu>
+						<h:message styleClass="errMessage-display" for="gender" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}" />
+						<h:outputText styleClass="userEntry-label" value="Date of Birth*:" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}" />  
+						<p:calendar id="dob" styleClass="singleresult-edit"  navigator="true" yearRange="c-120:c+80"  value="#{clientSetUpMVC.currentScreenInfo.wizPerson.dob}"
+												 effect="slideDown" pattern="dd-MMM-yyyy" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}"
+								required="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}"
+								requiredMessage="You must enter a Date of Birth" 
+								converterMessage="Date of Birth must be in valid format"
+								validator="#{clientSetUpMVC.validateDOB}" >
+						</p:calendar>
+						<h:message styleClass="errMessage-display" for="dob" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}" />
+						<h:outputText styleClass="userEntry-label" value="Marital Status:" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}" /> 
+						<h:selectOneMenu id="maritalStatus" styleClass="singleresult-edit" value="#{clientSetUpMVC.selectedMaritalStatus}" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}" >
+							<f:selectItems value="#{clientSetUpMVC.maritalStatusMap}" />
+						</h:selectOneMenu>
+						<h:message styleClass="errMessage-display" for="maritalStatus" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}" />
+						<h:outputText styleClass="userEntry-label" value="SSN/SIN*:" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}"  /> 
+						<p:inputMask id="ssn" styleClass="singleresult-edit" value="#{clientSetUpMVC.currentScreenInfo.wizPerson.ssn}" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}"
+								mask="999-999-999"
+								required="true"
+								requiredMessage="You must enter a SIN/SSN" 
+								validatorMessage="SSN/SIN cannot exceed 20 characters"> 
+							<f:validateLength  maximum="20"/>
+						</p:inputMask>
+						<h:message styleClass="errMessage-display" for="ssn" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}" />
+						<h:outputText styleClass="userEntry-label" value="Business Name*" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizBusiness()}"  /> 
+						<p:inputText id="busName" styleClass="singleresult-edit" value="#{clientSetUpMVC.currentScreenInfo.wizBusiness.name}" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizBusiness()}"
+								required="true"
+								requiredMessage="You must enter a Business Name" 
+								validatorMessage="Business Name cannot exceed 80 characters"> 
+							<f:validateLength  maximum="80"/>
+						</p:inputText>
+						<h:message styleClass="errMessage-display" for="busName" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizBusiness()}" />
+						<h:outputText styleClass="userEntry-label" value="Business No./Code:*" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizBusiness()}"  /> 
+						<p:inputText id="busNo" styleClass="singleresult-edit" value="#{clientSetUpMVC.currentScreenInfo.wizBusiness.busNo}" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizBusiness()}"
+								required="true"
+								requiredMessage="You must enter a Business No." 
+								validatorMessage="Business No. cannot exceed 30 characters"> 
+							<f:validateLength  maximum="30"/>
+						</p:inputText>
+						<h:message styleClass="errMessage-display" for="busNo" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizBusiness()}" />
+						<h:outputText styleClass="userEntry-label" value="Web Site*" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizBusiness()}"  /> 
+						<p:inputText id="websiteUrl" styleClass="singleresult-edit" value="#{clientSetUpMVC.currentScreenInfo.wizBusiness.websiteUrl}" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizBusiness()}"
+								required="true"
+								requiredMessage="You must enter a Web Site" 
+								validatorMessage="Web Site URL cannot exceed 60 characters"> 
+							<f:validateLength  maximum="60"/>
+						</p:inputText>
+						<h:message styleClass="errMessage-display" for="websiteUrl" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizBusiness()}" />						
+						<h:outputText styleClass="userEntry-label" value="EMail Address*"  /> 
+						<p:inputText id="email" styleClass="singleresult-edit" value="#{clientSetUpMVC.currentScreenInfo.wizClient.email}" 
+								required="true"
+								requiredMessage="You must enter an EMail Address" 
+								validator="#{clientSetUpMVC.validateEmail}" >
+						</p:inputText>
+						<h:message styleClass="errMessage-display" for="email" />
+						<h:outputText styleClass="userEntry-label" value="Telephone No.*"  /> 
+						<p:inputMask id="telephone" styleClass="singleresult-edit" value="#{clientSetUpMVC.currentScreenInfo.wizClient.telephone}" 
+								mask="(999) 999-9999"
+								required="true"
+								requiredMessage="You must enter Telephone No." 
+								validatorMessage="Telephone No. cannot exceed 20 characters"> 
+							<f:validateLength  maximum="20"/>
+						</p:inputMask>
+						<h:message styleClass="errMessage-display" for="telephone" />
+						<h:outputText styleClass="userEntry-label" value="Cell Phone No."  /> 
+						<p:inputMask id="cell" styleClass="singleresult-edit" value="#{clientSetUpMVC.currentScreenInfo.wizClient.cellPhone}" 
+								mask="(999) 999-9999"
+								validatorMessage="Cell Phone No. cannot exceed 20 characters"> 
+							<f:validateLength  maximum="40"/>
+						</p:inputMask>
+						<h:message styleClass="errMessage-display" for="cell" />
+					</h:panelGrid>	
+			  	</p:panel>			
+			</p:tab>
+			<p:tab id="newClientConfirm" titleStyleClass="nav-wizTab" title="Confirm/Process">
+			  	<p:panel header="#{clientSetUpMVC.selectedClientTypeDesc}"> 
+			  		<h:panelGrid styleClass="pageheader-display" columns="1" cellpadding="2"   > 
+        				<h:outputText styleClass="outputLabel" disabled="true"  value="Base Client" />
+        			</h:panelGrid>  
+					<h:panelGrid columns="2" cellpadding="2"> 
+						<h:outputText value="First Name:" styleClass="userEntry-label" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientSetUpMVC.currentScreenInfo.wizPerson.firstName}" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}" />
+						<h:outputText value="Middle Name:" styleClass="userEntry-label" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientSetUpMVC.currentScreenInfo.wizPerson.middleName}" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}" />
+						<h:outputText value="Last Name:" styleClass="userEntry-label" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientSetUpMVC.currentScreenInfo.wizPerson.lastName}" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}" /> 
+						<h:outputText value="Name Prefix:" styleClass="userEntry-label" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientSetUpMVC.selectedNamePrefixDesc}" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}" />
+						<h:outputText value="Gender:" styleClass="userEntry-label" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientSetUpMVC.selectedGenderDesc}" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}" />
+						<h:outputText value="Date of Birth:" styleClass="userEntry-label" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}" /> 
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientSetUpMVC.currentScreenInfo.wizPerson.dob}" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}" > 
+    						<f:convertDateTime pattern="EEEEEEEE, MMM dd, yyyy" />							
+						</h:outputText>
+						<h:outputText value="Marital Status:" styleClass="userEntry-label" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientSetUpMVC.selectedMaritalStatusDesc}" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}" />
+						<h:outputText value="SSN/SIN:" styleClass="userEntry-label" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientSetUpMVC.currentScreenInfo.wizPerson.ssn}" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizPerson()}" />
+						<h:outputText value="Business Name:" styleClass="userEntry-label" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizBusiness()}" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientSetUpMVC.currentScreenInfo.wizBusiness.name}" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizBusiness()}" />
+						<h:outputText value="Business No./Code:" styleClass="userEntry-label" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizBusiness()}" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientSetUpMVC.currentScreenInfo.wizBusiness.busNo}" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizBusiness()}" />
+						<h:outputText value="Web Site:" styleClass="userEntry-label" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizBusiness()}" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientSetUpMVC.currentScreenInfo.wizBusiness.websiteUrl}" rendered="#{clientSetUpMVC.currentScreenInfo.isthereWizBusiness()}" />
+						<h:outputText value="EMail Address:" styleClass="userEntry-label" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientSetUpMVC.currentScreenInfo.wizClient.email}" />
+						<h:outputText value="Telephone No.:" styleClass="userEntry-label" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientSetUpMVC.currentScreenInfo.wizClient.telephone}" />
+						<h:outputText value="Cell Phone No.:" styleClass="userEntry-label" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientSetUpMVC.currentScreenInfo.wizClient.cellPhone}" />
+					</h:panelGrid>
+					<h:panelGrid styleClass="pageheader-display" columns="1" cellpadding="2"   > 
+        				<h:outputText styleClass="outputLabel" disabled="true"  value="Address" />
+        			</h:panelGrid>
+        			<h:panelGrid columns="2" cellpadding="2"> 
+						<h:outputText value="Street:" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientSetUpMVC.currentScreenInfo.wizAddress.street}" />
+						<h:outputText value="Apartment/Unit:" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientSetUpMVC.currentScreenInfo.wizAddress.aptUnit}" />
+						<h:outputText value="City:" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientSetUpMVC.currentScreenInfo.wizAddress.city}" />
+						<h:outputText value="State/Province:" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientSetUpMVC.selectedStateProvDesc}" />
+						<h:outputText value="Country:" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientSetUpMVC.selectedCountryDesc}" />
+						<h:outputText value="Postal/Zip Code:" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientSetUpMVC.currentScreenInfo.wizAddress.postalZip}" />
+					    <h:commandButton id="createNew" value="Submit"  action="#{clientSetUpMVC.createNewClient()}"/>
+					</h:panelGrid>	
+			  	</p:panel>			
+			</p:tab>
+        </p:wizard>
+     </p:tab>
+    </p:tabView> 
+     
+</h:form>
+</h:body>
+</html>

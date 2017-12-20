@@ -1,0 +1,367 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+</h:head>
+<h:body>
+<h:outputStylesheet library="css" name="pbstyles.css"  />
+<h:form id="form">
+
+	<p:growl id="growl" sticky="true" showDetail="true"/> 
+	<h:panelGrid columns="1" cellpadding="7" rendered="#{tabNavigator.activeTabIndex eq -10}"> 
+		<h:outputText styleClass="goodMessage-display"
+          	value="New Account was successfully created" />  
+	</h:panelGrid>
+   <p:tabView id="tabView" activeIndex="#{tabNavigator.activeTabIndex}"  dynamic="true">  
+    
+   <p:ajax event="tabChange" listener="#{tabNavigator.onMainPageTabChange}" update=":form:growl"/>
+   
+        <p:tab title="About/Guidance" id="AboutA"  titleStyleClass="#{tabNavigator.aboutTabStyle}" disabled="#{currentScreenInfo.inWizAcctValidation}" > 
+           	<h:panelGrid styleClass="desc-display" > 
+           		<h:outputText styleClass="desc-header-display"  value="Introduction" />
+           		<h:outputText value="" />
+               	<h:outputText  
+                   	value="The PersonalBanker application provides a mock-up of  an online bank with the ability to open accounts and process transactions on various account activities (e.g. stock buys/sells, savings deposits, etc).   Sophistication is provided via the ability to execute inter-fund transfers, perform complex automatic interest/valuation calculations, computation of capital gains/losses on stock sells, etc.   The user is provided details about each account in his/her portfolio as well as details for each historic transaction in an account." /> 
+                <h:outputText value="Below is a description of each of the tabs on the main page." /> 
+                <h:outputText value="" />
+                <h:outputText styleClass="desc-header-display" value="View/Edit Client Settings" />
+                <h:outputText value="After setting up client information (Client Setup tab) when first using the application the user then  has the ability to view/edit Detail Client Info (person or business depending upon choice) and Address using the 'accordion' layout under this tab.   Please note that when in edit mode the information will be subject to validations when the user attempts to save (e.g. entering valid email, entering in a non-blank city, etc)." />
+                <h:outputText value="" />
+                <h:outputText styleClass="desc-header-display" value="Portfolio Information (and underlying Account Detail pages)" />
+                <h:outputText value="" />
+                <h:outputText value="The screen under this tab will give a summary of open accounts in a record table (each of these accounts was created/opened by going through the wizard in the Add An Account tab – see below).  Prior to adding any account (ie. when the user first starts in the system) the record grid will be empty." />
+                <h:outputText value="" />
+                <h:outputText value="To 'drill down' to a specific account, the user selects a specific account record and clicks the 'View Selected Account Detail' button." />
+                <h:outputText value="" />
+                <h:outputText styleClass="desc-miniheader-display" value="The Account Detail Information Page consists of:" />
+                <h:outputText value="(i) detailed account information data (e.g. Account Name, Open Date, Balance, etc.)" />
+                <h:outputText value="(ii) an Account Transaction Activity grid consisting of transactions.   Initially all records are shown (ordered by transaction date) but the user can refine the search to date range and/or transaction type (and clicking the 'View' button).   For refined search, running totals are suppressed.   When the user clicks/selects a specific transaction record, the transaction detail is shown in a dialog and the user may be able to reverse a transaction (see criteria below)." />
+                <h:outputText value="(iii) the ability to Create a New Transaction (except for annuities and non-cashable GIC/Term Deposits) by selecting Transaction Type and clicking 'Go' button." />
+                <h:outputText value="" />
+                <h:outputText value="The types of accounts are:" />
+                <h:outputText value="" />
+                <h:outputText styleClass="desc-miniheader-display" value="Chequing" />
+                <h:outputText value="An account with cash holdings and no interest earned.  Deposits and withdrawals can be made on this account (with the amounts coming from/going to Cash).   Also cheques can be issued.   
+ Transfers can be made in/out of this account to other chequing accounts or savings accounts.   Also a chequing account may be used as a source of funds when opening another account or for Stock buys.    A chequing account  may also a destination account for stock sells, annuity payments or cashable GIC/Term Deposit withdrawals.   While back-dating of transactions is allowed, please note that validations ensure that any activity into/out of  a chequing account occurs no earlier than opening date of the account and that sufficient funds are available from the source account.  " />
+ 				<h:outputText value="" />
+                <h:outputText styleClass="desc-miniheader-display" value="Savings" />
+                <h:outputText value="An account with cash holdings where interest is earned.   The interest rate on a savings account can vary with the ability for the user to enter in new rates with corresponding effective dates.     The savings account interest rate is annual but interest is calculated on a daily basis on the day-end balance (including accrued interest) with interest debited to the account at the end of each month.  Please note that any change to interest rates and any account activity result in a recalculation of interest (and new month end debits) going forward from the effective date of the change to the system date.   Interest payments are also determined (and updated if necessary) at each login." />
+                <h:outputText value="Transfers can be made in/out of this account to other savings accounts or chequing accounts.   Also a savings account may be used as a source of funds when opening another account or for Stock buys.    A savings account  may also a destination account for stock sells, annuity payments or cashable GIC/Term Deposit withdrawals.   While back-dating of transactions is allowed, please note that validations ensure that any activity into/out of  a chequing account occurs no earlier than opening date of the account and that sufficient funds are available from the source account." />
+                <h:outputText value="" />
+                <h:outputText styleClass="desc-miniheader-display" value="GIC/Term Deposit" />
+                <h:outputText value="An account where balance is the amount the account opened with minus (in the case of CASHABLE GIC/Term Deposit) any funds out withdrawals.  The maturity value of the account (future value) is also presented in the account summary.   The account has an associated interest rate with compounding option selected when the account is opened (Add An Account wizard tab).  If the GIC/Term Deposit is cashable then Funds Out (to savings/chequing/cash) transactions can be created, otherwise there are no transactions after the account opening." />
+                <h:outputText value="" />
+                <h:outputText styleClass="desc-miniheader-display" value="Annuity" />
+                <h:outputText value="This is an account with periodic payments made to another account (chequing/savings) or to Cash.   The term, frequency of payments and interest rate (along with compounding) are determined when the user creates the account (Add an Account wizard tab).   The account summary presents as the balance the present value (PV) of the remaining payments of the annuity computed given the interest, compounding, term and frequency parameters.   The user cannot create new transactions although the open account and payment transactions are shown in the account activity records table (and detail can be viewed by clicking/selecting a transaction)." />
+                <h:outputText value="" />
+                <h:outputText styleClass="desc-miniheader-display" value="Stock" />
+                <h:outputText value="This is an account based upon a particular stock represented by a valid stock exchange symbol.  The current price and market value (price  * No. of Shares) is shown on the account detail with this information retrieved via a web service utilizing the Yahoo Finance API.  When the account is opened (open date) and for Buy/Sell transactions, the historic/current price of the stock is obtained from the Yahoo Finance ticker and this can be applied unless the user elects to used his/her own price.  " />
+                <h:outputText value="Buys/Sells have funds coming from / going to Cash or an offset chequing/savings account.   In the case of buys with source of funds from chequing/savings, validation is done to ensure that there are sufficient funds in the source account. Transaction backdating (from system date) is allowed but note that for buys/sells from/to chequing/savings validations are done to ensure that the transaction occurs no earlier than the opening date of the offset chequing/savings account.    Capital gains/losses are computed using the average costing method on stock sells.   To preserve the integrity of capital gain/loss calculations, buys/sells/reversals are not allowed for transaction dates on/before the Stock account's last unreversed Sell transaction date.   Also note that stock buys/sells are not allowed on dates when the underlying stock exchange is closed (e.g. weekends or statutory holidays)." />
+                <h:outputText value="" />
+                <h:outputText styleClass="desc-miniheader-display" value="Note Regarding Account Transaction REVERSALS" />
+                <h:outputText value="Reversals can be made on transaction detail dialog (button is shown/enabled) provided we are not dealing with transactions that involve the opening of an account (this account or the offsetting transaction account).  Reversals are not allowed on annuity payouts, savings interest debits  and stock transactions (buys/sells) prior to the last  unreversed Sell transaction." />
+                <h:outputText value="" />
+                <h:outputText styleClass="desc-header-display" value="Add An Account" />
+                <h:outputText value="" />
+                <h:outputText value="The user is taken to a a four-step wizard (with Next and Back buttons) whereby he/she chooses an account type and enters in information for creation of that account (the account types were discussed above).   When creating an account, the source of funds for opening the account are Cash or any chequing/savings accounts that were already created.   Note that each account must have an unique account name and account number.   And stock accounts must correspond to a valid stock symbol (recognized by Yahoo Finance).   
+                " />
+                <h:outputText value="To escape this wizard, click the Quit button on the first screen (Account Type) or on the last screen (Confirmation).  [navigation to the first screen can be done by clicking the 'Back' button]" />
+           		</h:panelGrid>  
+           		
+        </p:tab>
+        <p:tab title="View/Edit Client Settings"  titleStyleClass="#{tabNavigator.viewEditClientTabStyle}" id="ClientSettings" disabled="#{currentScreenInfo.inWizAcctValidation}" >
+        	<p:accordionPanel multiple="true"> 
+        		<p:tab title="Detail Client Info" titleStyleClass="nav-menuTab" id="tabClientInfo">  
+        			<h:panelGrid columns="2" cellpadding="2"  rendered="#{clientEditViewSettingsMVC.currentScreenInfo.clientEdit}" > 
+        			    <h:commandLink styleClass="commandlink-display" action="#{clientEditViewSettingsMVC.doClientEditChange}"> 
+                			<h:outputText value="View" styleClass="commandlink-display"  />  	              			 
+                		</h:commandLink>   
+                		<h:outputText styleClass="commandlink-display"  disabled="true"  value="Edit" />
+        			</h:panelGrid>
+        			<h:panelGrid columns="2" cellpadding="2"  rendered="#{!clientEditViewSettingsMVC.currentScreenInfo.clientEdit}" > 
+        				<h:outputText styleClass="commandlink-display" disabled="true"  value="View" />
+        			    <h:commandLink styleclass="commandlink-display" action="#{clientEditViewSettingsMVC.doClientEditChange}"> 
+                			<h:outputText value="Edit" styleClass="commandlink-display"  />  	              			 
+                		</h:commandLink> 
+        			</h:panelGrid>  
+        			<h:panelGrid styleClass="pageheader-display" columns="1" cellpadding="2"  rendered="#{clientEditViewSettingsMVC.currentScreenInfo.isthereClient()}" > 
+        				<h:outputText styleClass="outputLabel" disabled="true"  value=" " />
+        				<h:outputText styleClass="outputLabel" disabled="true"  value="#{clientEditViewSettingsMVC.clientTypeDesc}" />
+        				<h:outputText styleClass="outputLabel" disabled="true"  value=" " />
+        			</h:panelGrid>        			
+            		<h:panelGrid id="clientEditSave" styleClass="formEdit-backgrd" columns="3" cellpadding="1" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.clientEdit}" > 
+						<h:outputText styleClass="userEntry-label" value="First Name*:" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.istherePerson()}" /> 
+						<p:inputText styleClass="singleresult-edit" id="firstName" value="#{clientEditViewSettingsMVC.personEditObj.firstName}" rendered="#{clientSetUpMVC.currentScreenInfo.istherePerson()}"
+								required="true"
+								requiredMessage="You must enter a First Name" 
+								validatorMessage="First Name cannot exceed 30 characters"> 
+							<f:validateLength  maximum="30"/>
+						</p:inputText>
+						<h:message styleClass="errMessage-display" for="firstName" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.istherePerson()}" />
+						<h:outputText value="Middle Name:" styleClass="userEntry-label" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.istherePerson()}" /> 
+						<p:inputText styleClass="singleresult-edit" id="middleName" value="#{clientEditViewSettingsMVC.personEditObj.middleName}" rendered="#{clientSetUpMVC.currentScreenInfo.istherePerson()}"
+								validatorMessage="Middle Name cannot exceed 30 characters"> 
+							<f:validateLength  maximum="30"/>
+						</p:inputText>
+						<h:message styleClass="errMessage-display"  for="middleName" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.istherePerson()}" />
+						<h:outputText value="Last Name*:" styleClass="userEntry-label" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.istherePerson()}" /> 
+						<p:inputText styleClass="singleresult-edit" id="lastName" value="#{clientEditViewSettingsMVC.personEditObj.lastName}" rendered="#{clientSetUpMVC.currentScreenInfo.istherePerson()}"
+								required="true"
+								requiredMessage="You must enter a Last Name" 
+								validatorMessage="Last Name cannot exceed 30 characters"> 
+							<f:validateLength  maximum="30"/>
+						</p:inputText>
+						<h:message styleClass="errMessage-display"  for="lastName" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.istherePerson()}" />
+						<h:outputText value="Name Prefix:" styleClass="userEntry-label" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.istherePerson()}" /> 
+						<h:selectOneMenu styleClass="singleresult-edit" id="namePrefix" value="#{clientEditViewSettingsMVC.selectedNamePrefix}" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.istherePerson()}" >
+							<f:selectItems value="#{clientEditViewSettingsMVC.namePrefixMap}" />
+						</h:selectOneMenu>
+						<h:message styleClass="errMessage-display" for="namePrefix" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.istherePerson()}" />
+						<h:outputText value="Gender:" styleClass="userEntry-label" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.istherePerson()}" /> 
+						<h:selectOneMenu styleClass="singleresult-edit" id="gender" value="#{clientEditViewSettingsMVC.selectedGender}" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.istherePerson()}" >
+							<f:selectItems value="#{clientEditViewSettingsMVC.genderMap}" />
+						</h:selectOneMenu>
+						<h:message styleClass="errMessage-display"  for="gender" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.istherePerson()}" />
+						<h:outputText value="Date of Birth*:" styleClass="userEntry-label" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.istherePerson()}" />  
+						<p:calendar styleClass="singleresult-edit" id="dob" navigator="true" yearRange="c-120:c+80" value="#{clientEditViewSettingsMVC.personEditObj.dob}"  rendered="#{clientEditViewSettingsMVC.currentScreenInfo.istherePerson()}"
+										effect="slideDown" pattern="dd-MMM-yyyy"
+								required="#{clientEditViewSettingsMVC.currentScreenInfo.istherePerson()}"
+								requiredMessage="You must enter a Date of Birth" 
+								converterMessage="Date of Birth must be in valid format"
+								validator="#{clientEditViewSettingsMVC.validateDOB}" >
+						</p:calendar>
+						<h:message styleClass="errMessage-display" for="dob" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.istherePerson()}" />
+						<h:outputText value="Marital Status:" styleClass="userEntry-label" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.istherePerson()}" /> 
+						<h:selectOneMenu styleClass="singleresult-edit" id="maritalStatus" value="#{clientEditViewSettingsMVC.selectedMaritalStatus}" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.istherePerson()}" >
+							<f:selectItems value="#{clientEditViewSettingsMVC.maritalStatusMap}" />
+						</h:selectOneMenu>
+						<h:message styleClass="errMessage-display"  for="maritalStatus" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.istherePerson()}" />
+						<h:outputText value="SSN/SIN*:" styleClass="userEntry-label" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.istherePerson()}"  /> 
+						<p:inputMask styleClass="singleresult-edit" id="ssn" value="#{clientEditViewSettingsMVC.personEditObj.ssn}" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.istherePerson()}"
+								mask="999-999-999"
+								required="true"
+								requiredMessage="You must enter a SIN/SSN" 
+								validatorMessage="SSN/SIN cannot exceed 20 characters"> 
+							<f:validateLength  maximum="20"/>
+						</p:inputMask>
+						<h:message styleClass="errMessage-display"  for="ssn" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.istherePerson()}" />
+						<h:outputText value="Business Name*" styleClass="userEntry-label" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.isthereBusiness()}"  /> 
+						<p:inputText styleClass="singleresult-edit" id="busName" value="#{clientEditViewSettingsMVC.businessEditObj.name}" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.isthereBusiness()}"
+								required="true"
+								requiredMessage="You must enter a Business Name" 
+								validatorMessage="Business Name cannot exceed 80 characters"> 
+							<f:validateLength  maximum="80"/>
+						</p:inputText>
+						<h:message styleClass="errMessage-display"  for="busName" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.isthereBusiness()}" />
+						<h:outputText value="Business No./Code:*" styleClass="userEntry-label" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.isthereBusiness()}"  /> 
+						<p:inputText styleClass="singleresult-edit" id="busNo" value="#{clientEditViewSettingsMVC.businessEditObj.busNo}" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.isthereBusiness()}"
+								required="true"
+								requiredMessage="You must enter a Business No." 
+								validatorMessage="Business No. cannot exceed 30 characters"> 
+							<f:validateLength  maximum="30"/>
+						</p:inputText>
+						<h:message styleClass="errMessage-display"  for="busNo" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.isthereBusiness()}" />
+						<h:outputText value="Web Site*" styleClass="userEntry-label" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.isthereBusiness()}"  /> 
+						<p:inputText styleClass="singleresult-edit" id="websiteUrl" value="#{clientEditViewSettingsMVC.businessEditObj.websiteUrl}" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.isthereBusiness()}"
+								required="true"
+								requiredMessage="You must enter a Web Site" 
+								validatorMessage="Web Site URL cannot exceed 60 characters"> 
+							<f:validateLength  maximum="60"/>
+						</p:inputText>
+						<h:message styleClass="errMessage-display"  for="websiteUrl" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.isthereBusiness()}" />	
+						<h:outputText styleClass="userEntry-label" value="EMail Address*"  /> 
+						<p:inputText styleClass="singleresult-edit" id="email" value="#{clientEditViewSettingsMVC.clientEditObj.email}" 
+								required="true"
+								requiredMessage="You must enter an EMail Address" 
+								validator="#{clientEditViewSettingsMVC.validateEmail}" >
+						</p:inputText>
+						<h:message styleClass="errMessage-display"  for="email" />
+						<h:outputText styleClass="userEntry-label" value="Telephone No.*"  /> 
+						<p:inputMask styleClass="singleresult-edit" id="telephone" value="#{clientEditViewSettingsMVC.clientEditObj.telephone}" 
+								mask="(999) 999-9999"
+								required="true"
+								requiredMessage="You must enter Telephone No." 
+								validatorMessage="Telephone No. cannot exceed 20 characters"> 
+							<f:validateLength  maximum="20"/>
+						</p:inputMask>
+						<h:message styleClass="errMessage-display"  for="telephone" />
+						<h:outputText styleClass="userEntry-label" value="Cell Phone No."  /> 
+						<p:inputMask styleClass="singleresult-edit" id="cell" value="#{clientEditViewSettingsMVC.clientEditObj.cellPhone}" 
+								mask="(999) 999-9999"
+								validatorMessage="Cell Phone No. cannot exceed 20 characters"> 
+							<f:validateLength  maximum="40"/>
+						</p:inputMask>
+						<h:message styleClass="errMessage-display"  for="cell" />
+						<h:commandButton  value="Save" >
+							<f:ajax execute="clientEditSave" render="@form" listener="#{clientEditViewSettingsMVC.saveClientEdit}" />
+						</h:commandButton>
+            		</h:panelGrid> 
+            		<h:panelGrid columns="2" cellpadding="1" rendered="#{!clientEditViewSettingsMVC.currentScreenInfo.clientEdit}" > 
+						<h:outputText value="First Name:" styleClass="userEntry-label" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.istherePerson()}" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientEditViewSettingsMVC.currentScreenInfo.person.firstName}" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.istherePerson()}" />
+						<h:outputText value="Middle Name:" styleClass="userEntry-label" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.istherePerson()}" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientEditViewSettingsMVC.currentScreenInfo.person.middleName}" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.istherePerson()}" />
+						<h:outputText value="Last Name:"  styleClass="userEntry-label" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.istherePerson()}" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientEditViewSettingsMVC.currentScreenInfo.person.lastName}" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.istherePerson()}" />
+						<h:outputText value="Name Prefix:" styleClass="userEntry-label" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.istherePerson()}" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientEditViewSettingsMVC.selectedNamePrefixDesc}" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.istherePerson()}" />
+						<h:outputText value="Gender:" styleClass="userEntry-label" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.istherePerson()}" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientEditViewSettingsMVC.selectedGenderDesc}" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.istherePerson()}" />
+						<h:outputText value="Date of Birth:" styleClass="userEntry-label" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.istherePerson()}" /> 
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientEditViewSettingsMVC.currentScreenInfo.person.dob}" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.istherePerson()}" > 
+    						<f:convertDateTime pattern="EEEEEEEE, MMM dd, yyyy" />							
+						</h:outputText>
+						<h:outputText value="Marital Status:" styleClass="userEntry-label" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.istherePerson()}" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientEditViewSettingsMVC.selectedMaritalStatusDesc}" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.istherePerson()}" />
+						<h:outputText value="SSN/SIN:" styleClass="userEntry-label" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.istherePerson()}" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientEditViewSettingsMVC.currentScreenInfo.person.ssn}" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.istherePerson()}" />
+						<h:outputText value="Business Name:" styleClass="userEntry-label" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.isthereBusiness()}" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientEditViewSettingsMVC.currentScreenInfo.business.name}" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.isthereBusiness()}" />
+						<h:outputText value="Business Name:" styleClass="userEntry-label" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.isthereBusiness()}" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientEditViewSettingsMVC.currentScreenInfo.business.name}" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.isthereBusiness()}" />
+						<h:outputText value="Business No./Code:" styleClass="userEntry-label" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.isthereBusiness()}" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientEditViewSettingsMVC.currentScreenInfo.business.busNo}" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.isthereBusiness()}" />
+						<h:outputText value="Web Site:" styleClass="userEntry-label" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.isthereBusiness()}" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientEditViewSettingsMVC.currentScreenInfo.business.websiteUrl}" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.isthereBusiness()}" />
+						<h:outputText value="EMail Address:" styleClass="userEntry-label" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientEditViewSettingsMVC.currentScreenInfo.client.email}" />
+						<h:outputText value="Telephone No.:" styleClass="userEntry-label" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientEditViewSettingsMVC.currentScreenInfo.client.telephone}" />
+						<h:outputText value="Cell Phone No.:" styleClass="userEntry-label" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientEditViewSettingsMVC.currentScreenInfo.client.cellPhone}" />
+					</h:panelGrid> 
+            	</p:tab>
+            	<p:tab title="Address" titleStyleClass="nav-menuTab">
+        			<h:panelGrid columns="2" cellpadding="2"  rendered="#{clientEditViewSettingsMVC.currentScreenInfo.addressEdit}" > 
+        			    <h:commandLink styleClass="commandlink-display" action="#{clientEditViewSettingsMVC.doAddressEditChange}"> 
+                			<h:outputText styleClass="commandlink-display" value="View" />  	              			 
+                		</h:commandLink>   
+                		<h:outputText styleClass="commandlink-display" disabled="true"  value="Edit" />
+        			</h:panelGrid>
+        			<h:panelGrid columns="2" cellpadding="2"  rendered="#{!clientEditViewSettingsMVC.currentScreenInfo.addressEdit}" > 
+        				<h:outputText styleClass="commandlink-display" disabled="true"  value="View" />
+        			    <h:commandLink styleClass="commandlink-display" action="#{clientEditViewSettingsMVC.doAddressEditChange}"> 
+                			<h:outputText styleClass="commandlink-display" value="Edit" />  	              			 
+                		</h:commandLink> 
+        			</h:panelGrid>  
+            		<h:panelGrid id="addressEditSave" styleClass="formEdit-backgrd" columns="3" cellpadding="1" rendered="#{clientEditViewSettingsMVC.currentScreenInfo.addressEdit}"> 
+						<h:outputText styleClass="userEntry-label" value="Street*:" /> 
+						<p:inputText styleClass="singleresult-edit" id="streetName" value="#{clientEditViewSettingsMVC.addressEditObj.street}" 
+								required="true"
+								requiredMessage="You must enter a Street" 
+								validatorMessage="Street cannot exceed 80 characters"> 
+							<f:validateLength  maximum="80"/>
+						</p:inputText>
+						<h:message styleClass="errMessage-display" for="streetName"/>
+						<h:outputText styleClass="userEntry-label" value="Apartment/Unit:" /> 
+						<p:inputText id="aptUnit" styleClass="singleresult-edit" value="#{clientEditViewSettingsMVC.addressEditObj.aptUnit}" 
+								required="false"
+								validatorMessage="Apartment/Unit cannot exceed 7 characters"> 
+							<f:validateLength  maximum="7"/>
+						</p:inputText>
+						<h:message styleClass="errMessage-display" for="aptUnit"/>
+						<h:outputText styleClass="userEntry-label" value="City*:" /> 
+						<p:inputText id="city" styleClass="singleresult-edit" value="#{clientEditViewSettingsMVC.addressEditObj.city}" 
+								required="true"
+								requiredMessage="You must enter a City" 
+								validatorMessage="City cannot exceed 25 characters"> 
+							<f:validateLength  maximum="25"/>
+						</p:inputText>
+						<h:message styleClass="errMessage-display" for="city"/>	
+						<h:outputText styleClass="userEntry-label" id="countriesLbl" value="Country:"  /> 
+						<h:selectOneMenu id="countries" styleClass="singleresult-edit" value="#{clientEditViewSettingsMVC.selectedCountry}"  >
+							<f:selectItems value="#{clientEditViewSettingsMVC.countryMap}" />
+							<f:ajax render="states"/>
+						</h:selectOneMenu>
+						<h:message styleClass="errMessage-display" for="countries" /> 
+						<h:outputText styleClass="userEntry-label" id="statesLbl" value="State/Province:"  /> 			
+						<h:selectOneMenu id="states" styleClass="singleresult-edit" value="#{clientEditViewSettingsMVC.selectedStateProv}" >
+							<f:selectItems value="#{clientEditViewSettingsMVC.stateProvMap}" />
+						</h:selectOneMenu>
+						<h:message styleClass="errMessage-display" for="states"  /> 
+						<h:outputText styleClass="userEntry-label" value="Postal/Zip Code*:" /> 
+						<p:inputText id="postalZip" styleClass="singleresult-edit" value="#{clientEditViewSettingsMVC.addressEditObj.postalZip}" 
+								required="true"
+								requiredMessage="You must enter a Postal/Zip Code" 
+								validatorMessage="Postal/Zip Code cannot exceed 80 characters"> 
+							<f:validateLength  maximum="10"/>
+						</p:inputText>
+						<h:message styleClass="errMessage-display" for="postalZip"/>	
+						<h:commandButton  value="Save" >
+							<f:ajax execute="addressEditSave" render="@form" listener="#{clientEditViewSettingsMVC.saveAddressEdit}" />
+						</h:commandButton>	
+            		</h:panelGrid>
+					<h:panelGrid columns="2" cellpadding="1"  rendered="#{!clientEditViewSettingsMVC.currentScreenInfo.addressEdit}" > 
+						<h:outputText styleClass="userEntry-label" value="Street:" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientEditViewSettingsMVC.currentScreenInfo.address.street}" />
+						<h:outputText styleClass="userEntry-label"  value="Apartment/Unit:" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientEditViewSettingsMVC.currentScreenInfo.address.aptUnit}" />
+						<h:outputText styleClass="userEntry-label" value="City:" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientEditViewSettingsMVC.currentScreenInfo.address.city}" />
+						<h:outputText styleClass="userEntry-label" value="State/Province:" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientEditViewSettingsMVC.selectedStateProvDesc}" />
+						<h:outputText styleClass="userEntry-label" value="Country:" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientEditViewSettingsMVC.selectedCountryDesc}" />
+						<h:outputText styleClass="userEntry-label" value="Postal/Zip Code:" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{clientEditViewSettingsMVC.currentScreenInfo.address.postalZip}" />
+					</h:panelGrid> 
+            	</p:tab> 
+            </p:accordionPanel>  
+        </p:tab>
+        <p:tab title="Portfolio Information" titleStyleClass="#{tabNavigator.portfolioTabStyle}" id="Portfolio" disabled="#{currentScreenInfo.inWizAcctValidation}" >  
+            <h:panelGrid styleClass="pageheader-display" columns="1" cellpadding="3"> 
+                <h:outputText  
+                    value="Portfolio Account Holdings" />  
+            </h:panelGrid>  
+           <p:dataTable id="portfolioTable" var="account" value="#{portfolioMVC.portfolioList}"
+               rows="20" paginator="true" paginatorPosition="bottom" styleClass="mainData-display"
+               rowKey="#{account.accountId}"  selection="#{portfolioMVC.selectedAccount}" selectionMode="single" > 
+        		<f:facet name="header">  
+          			 Open Accounts 
+        		</f:facet> 
+        		<p:column sortBy="#{account.display}" headerText="Account Type">  
+	           		<h:outputText value="#{account.display}" />  
+	     		</p:column> 
+	     		<p:column sortBy="#{account.accountName}" headerText="Name">  
+	           		<h:outputText value="#{account.accountName}" />  
+	     		</p:column> 
+	     		<p:column sortBy="#{account.accountNo}" headerText="Acct. Number">  
+	           		<h:outputText value="#{account.accountNo}" />  
+	     		</p:column> 
+	     		<p:column sortBy="#{account.openDt}" headerText="Open Date">  
+	           		<h:outputText value="#{account.openDt}" >  
+	           			<f:convertDateTime  pattern="EEEEEEEE, MMM dd, yyyy" />
+	           		</h:outputText> 
+	     		</p:column>
+	     		<p:column sortBy="#{account.balance}" headerText="Current Balance/# Shares">  
+	           		<h:outputText value="#{account.balance}" rendered="#{account.accountType ne 'ST'}" > 
+	           			<f:convertNumber currencySymbol="$" type="currency" /> 
+	           		</h:outputText> 
+	           		<h:outputText value="#{account.balance}" rendered="#{account.accountType eq 'ST'}"  > 
+	           			<f:convertNumber pattern="#######" />
+	           		</h:outputText>
+	     		</p:column> 
+	     		<f:facet name="footer">  
+          			 <p:commandButton id="viewButton" value="View Selected Account Detail"  
+                         action="#{portfolioMVC.doSelectedDetail}" /> 
+        		</f:facet> 
+	     		
+           </p:dataTable>  
+        </p:tab>
+		<p:tab title="Add An Account" titleStyleClass="nav-menuTab" id="AddAccount" >  
+           	<h:panelGrid columns="1" cellpadding="10"> 
+               	<h:outputText  
+                   	value="Tab for Add Account" />  
+           		</h:panelGrid>  
+        </p:tab>
+		<p:tab title="Sign Out" titleStyleClass="#{tabNavigator.addAccountTabStyle}" id="SignOut" disabled="#{currentScreenInfo.inWizAcctValidation}" >  
+		<h:outputText  
+                    value="This is for client to sign out" />  		
+        </p:tab>
+    </p:tabView>  
+</h:form>
+</h:body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+</h:head>
+<h:body>
+<h:form id="form">
+       		<h:panelGrid columns="3" cellpadding="5">
+				<h:outputText value="Effective/Start Date (use calendar button)*:"  />  
+				<p:calendar id="savingsEffDtA" navigator="true" yearRange="c-120:c+10" value="#{savingsDetailMVC.newSReffectiveDt}"  showOn="button" 
+						required="true"
+						requiredMessage="You must enter an Effective/Start Date" 
+						converterMessage="Effective/Start Date must be in valid format (dd/mm/yy)"
+						validator="#{savingsDetailMVC.validateSavingsEffDt}" >
+				</p:calendar>
+				<h:message for="savingsEffDtA" />
+				<h:outputText value="Interest Rate (Annual Compounding) (%)*:" />  
+				<p:inputText id="savingsInterestA" value="#{savingsDetailMVC.newSRinterest}" 
+						 required="true" 
+						 requiredMessage="You must enter an Effective Annual Int. Rate" 
+						 converterMessage="Effective Annual Int. Rate must be numeric"
+						 validatorMessage="Effective Annual Int. Rate must be a valid percentage (0.01% to 100%)"> 
+					<f:validateDoubleRange  minimum="0.01" maximum="100"/>
+				</p:inputText>
+				<h:message for="savingsInterestA" />
+           		<h:commandButton id="saveButton" value="Save"  
+                            action="#{savingsDetailMVC.saveNewSavingsRate()}" /> 
+                <h:commandButton value="Cancel" action="#{savingsDetailMVC.cancelNewSavingsRate()}" >
+                	<f:ajax />
+                </h:commandButton>
+						
+			</h:panelGrid> 
+</h:form>
+</h:body>
+</html>

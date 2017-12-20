@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+</h:head>
+<h:body>
+<h:outputStylesheet library="css" name="pbstyles.css"  />
+<h:form id="form">  
+        	<h:panelGrid styleClass="pageheader-display" columns="1" cellpadding="0"> 
+                <h:outputText value="#{savingsTxnDetailMVC.txnDesc1}" /> 
+                <h:outputText value="#{savingsTxnDetailMVC.txnDesc2}" /> 
+            </h:panelGrid>  
+           <h:panelGrid styleClass="formEdit-backgrd" columns="3" cellpadding="2"> 
+           		<f:event listener="#{savingsTxnDetailMVC.validateForTransfers}" type="postValidate" />           		
+           		<h:outputLabel id="amountLbl" styleClass="userEntry-label" for="amount" value="Amount*:" rendered="#{savingsTxnDetailMVC.currentScreenInfo.newTxn}" />
+                <p:inputText id="amount" styleClass="singleresult-edit" value="#{savingsTxnDetailMVC.viewSavingsTxn.amount}" disabled="false" rendered="#{savingsTxnDetailMVC.currentScreenInfo.newTxn}"
+                    required="#{savingsTxnDetailMVC.currentScreenInfo.newTxn}" 
+					requiredMessage="You must enter an Amount" 
+					converterMessage="Amount must be numeric"
+					validator="#{savingsTxnDetailMVC.validateAmount}" >
+                </p:inputText>
+                <h:message styleClass="errMessage-display" for="amount" rendered="#{savingsTxnDetailMVC.currentScreenInfo.newTxn}" />
+                <h:outputLabel id="txnDtLbl" styleClass="userEntry-label" for="txnDt" value="Transaction Date:" rendered="#{savingsTxnDetailMVC.currentScreenInfo.newTxn}" />
+                <p:calendar id="txnDt" styleClass="singleresult-edit" navigator="true" yearRange="c-120:c+80" value="#{savingsTxnDetailMVC.viewSavingsTxn.txnDt}" disabled="false" rendered="#{savingsTxnDetailMVC.currentScreenInfo.newTxn}"
+                				effect="slideDown" pattern="dd-MMM-yyyy" 
+                	required="#{savingsTxnDetailMVC.currentScreenInfo.newTxn}" 
+                	requiredMessage="You must enter a Transaction Date" 
+                	converterMessage="Transaction Date must be in valid format"
+                	validator="#{savingsTxnDetailMVC.validateTransactionDt}" >
+                </p:calendar>
+                <h:message styleClass="errMessage-display" for="txnDt" rendered="#{savingsTxnDetailMVC.currentScreenInfo.newTxn}"/>
+                <h:outputLabel id="transferAcctInfoLbl" styleClass="userEntry-label" for="transferAcctInfo" value="Transfer Account:" rendered="#{savingsTxnDetailMVC.transferFlag and savingsTxnDetailMVC.currentScreenInfo.newTxn}" />
+                <h:selectOneMenu id="transferAcctInfo"  styleClass="singleresult-edit" value="#{savingsTxnDetailMVC.selectedTransferAcctInfo}" rendered="#{savingsTxnDetailMVC.transferFlag and savingsTxnDetailMVC.currentScreenInfo.newTxn}"  >
+   					<f:selectItems value="#{savingsTxnDetailMVC.transferAccountMap}" />
+   				</h:selectOneMenu>
+   				<h:message styleClass="errMessage-display" for="transferAcctInfo" rendered="#{savingsTxnDetailMVC.transferFlag and savingsTxnDetailMVC.currentScreenInfo.newTxn}" />
+           		<h:commandButton id="processButton" styleClass="button-display" value="Process" rendered="#{savingsTxnDetailMVC.currentScreenInfo.newTxn}"
+                            action="#{savingsTxnDetailMVC.processNewSavingsTxn()}"/> 
+                <h:commandButton value="Cancel" styleClass="button-display" action="#{savingsTxnDetailMVC.cancel()}" >
+                	<f:ajax />
+                </h:commandButton>                
+            </h:panelGrid>
+</h:form>
+</h:body>
+</html>

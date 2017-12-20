@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+</h:head>
+<h:body>
+<h:outputStylesheet library="css" name="pbstyles.css"  />
+<h:form id="form">
+			<p:growl id="growl" showDetail="true"/>  
+			
+			<f:event listener="#{stockTxnDetailMVC.postJSFStockValidation}" type="postValidate" />           		
+        	<h:panelGrid styleClass="pageheader-display" columns="1" cellpadding="0"> 
+                <h:outputText value="#{stockTxnDetailMVC.txnDesc1}" /> 
+                <h:outputText value="#{stockTxnDetailMVC.txnDesc2}" /> 
+            </h:panelGrid>  
+            <h:messages styleClass="errMessage-display" />          
+           <h:panelGrid styleClass="formEdit-backgrd" columns="2" cellpadding="2"> 
+                <h:outputLabel id="txnDtLbl" styleClass="userEntry-label" for="txnDt" value="Transaction Date*:" rendered="#{stockTxnDetailMVC.currentScreenInfo.newTxn}"/>
+                <p:calendar id="txnDt" styleClass="singleresult-edit"  navigator="true" yearRange="c-120:c+80"   value="#{stockTxnDetailMVC.viewStockTxn.txnDt}"  rendered="#{stockTxnDetailMVC.currentScreenInfo.newTxn}"
+                			effect="slideDown" pattern="dd-MMM-yyyy" 
+                	required="#{stockTxnDetailMVC.currentScreenInfo.newTxn}" 
+                	requiredMessage="You must enter a Transaction Date" 
+                	converterMessage="Transaction Date must be in valid format" >
+                  <p:ajax event="dateSelect" listener="#{stockTxnDetailMVC.doTransactionDtChange}"  update="priceA" />                
+                 </p:calendar>
+            </h:panelGrid>	
+            <h:panelGrid id="sharepricepanel" styleClass="formEdit-backgrd" columns="3" cellpadding="2"> 	
+ 		        <h:outputLabel value="Share Price:" styleClass="userEntry-label" rendered="#{stockTxnDetailMVC.currentScreenInfo.newTxn}" /> 
+ 		        <h:outputText styleClass="userEntry-label" value="Get Price From Ticker (for valid Txn date)?"  /> 
+ 		        <p:selectBooleanCheckbox id="fromTicker"  value="#{stockTxnDetailMVC.useTicker}" rendered="#{stockTxnDetailMVC.currentScreenInfo.newTxn}" > 
+ 		        	<p:ajax  update="sharepricepanel" />
+ 		        </p:selectBooleanCheckbox>
+ 		        <h:outputText  value=" " styleClass="userEntry-label" rendered="#{stockTxnDetailMVC.currentScreenInfo.newTxn}" /> 
+ 		        <h:outputText styleClass="userEntry-label" value="Manually Enter Price Per Share*: " rendered="#{stockTxnDetailMVC.currentScreenInfo.newTxn and !stockTxnDetailMVC.useTicker}" /> 
+				<p:inputText id="txnStockPrice" styleClass="singleresult-edit" value="#{stockTxnDetailMVC.viewStockTxn.price}" rendered="#{stockTxnDetailMVC.currentScreenInfo.newTxn and !stockTxnDetailMVC.useTicker}"  
+				    required="#{stockTxnDetailMVC.currentScreenInfo.newTxn}" 
+					requiredMessage="You must enter a Price Per Share" 
+					converterMessage="Price Per Share entered must be numeric"
+					validatorMessage="Price Per Share entered must be at least one cent"> 
+				  <f:validateDoubleRange  minimum="0.01"/>		    
+				</p:inputText>	
+				<h:outputText styleClass="userEntry-label" value="Price Per Share From Ticker: " rendered="#{stockTxnDetailMVC.currentScreenInfo.newTxn and stockTxnDetailMVC.useTicker}" /> 
+				<h:outputText styleClass="userEntry-label"  id="priceA" value="#{stockTxnDetailMVC.stockInfo.latestPrice}" 
+								rendered="#{stockTxnDetailMVC.currentScreenInfo.newTxn and stockTxnDetailMVC.useTicker}" > 
+                	<f:convertNumber currencySymbol=" " type="currency" /> 
+                </h:outputText>
+		    </h:panelGrid>	
+		    <h:panelGrid styleClass="formEdit-backgrd" columns="2" cellpadding="2"> 
+           		<h:outputLabel styleClass="userEntry-label" id="unitsLbl" for="units" value="No. Of Shares*:" rendered="#{stockTxnDetailMVC.currentScreenInfo.newTxn}" />
+                <p:inputText id="units" styleClass="singleresult-edit" value="#{stockTxnDetailMVC.viewStockTxn.units}" rendered="#{stockTxnDetailMVC.currentScreenInfo.newTxn}"
+                 	required="#{stockTxnDetailMVC.currentScreenInfo.newTxn}"
+					requiredMessage="You must enter the No. of Shares" 
+					converterMessage="No. of Shares must be a positve whole number" 
+					validator="#{stockTxnDetailMVC.validateUnits}" />
+ 		        <h:outputLabel styleClass="userEntry-label" value="Transaction Fee:" rendered="#{stockTxnDetailMVC.currentScreenInfo.newTxn}" />  
+				<p:inputText id="txnStockFee" styleClass="singleresult-edit" value="#{stockTxnDetailMVC.viewStockTxn.fee}" rendered="#{stockTxnDetailMVC.currentScreenInfo.newTxn}"  
+				    required="false" 
+					converterMessage="Transaction Fee must be numeric" />
+                <h:outputLabel id="transferAcctInfoLbl"  styleClass="userEntry-label" for="transferAcctInfo" value="Transfer Account:" rendered="#{stockTxnDetailMVC.currentScreenInfo.newTxn}"/>
+                <h:selectOneMenu id="transferAcctInfo" styleClass="singleresult-edit" value="#{stockTxnDetailMVC.selectedTransferAcctInfo}" rendered="#{stockTxnDetailMVC.currentScreenInfo.newTxn}" >
+   					<f:selectItems value="#{stockTxnDetailMVC.transferAccountMap}" />
+   				</h:selectOneMenu>
+           		<h:commandButton id="processButton" styleClass="button-display" value="Process"  
+                            action="#{stockTxnDetailMVC.processNewStockTxn()}" rendered="#{stockTxnDetailMVC.currentScreenInfo.newTxn}"/> 
+                <h:commandButton value="Cancel" styleClass="button-display" action="#{stockTxnDetailMVC.cancel()}" >
+                	<f:ajax />
+                </h:commandButton>
+            </h:panelGrid>
+</h:form>
+</h:body>
+</html>

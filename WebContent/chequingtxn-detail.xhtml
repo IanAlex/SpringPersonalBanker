@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+</h:head>
+<h:body>
+<h:outputStylesheet library="css" name="pbstyles.css"  />
+<h:form id="form">
+        	<h:panelGrid styleClass="pageheader-display" columns="1" cellpadding="0"> 
+                <h:outputText value="#{chequingTxnDetailMVC.txnDesc1}" /> 
+                <h:outputText value="#{chequingTxnDetailMVC.txnDesc2}" /> 
+            </h:panelGrid>  
+           <h:panelGrid  styleClass="formEdit-backgrd" columns="3" cellpadding="2"> 
+           		<f:event listener="#{chequingTxnDetailMVC.validateForTransfers}" type="postValidate" />           		
+           		<h:outputLabel id="amountLbl" styleClass="userEntry-label" for="amount" value="Amount*:" rendered="#{chequingTxnDetailMVC.currentScreenInfo.newTxn}" />
+                <p:inputText id="amount" styleClass="singleresult-edit" value="#{chequingTxnDetailMVC.viewChequingTxn.amount}" rendered="#{chequingTxnDetailMVC.currentScreenInfo.newTxn}"
+                 	required="#{chequingTxnDetailMVC.currentScreenInfo.newTxn}"
+					requiredMessage="You must enter an Amount" 
+					converterMessage="Amount must be numeric"
+					validator="#{chequingTxnDetailMVC.validateAmount}" >
+                </p:inputText>
+                <h:message styleClass="errMessage-display" for="amount" rendered="#{chequingTxnDetailMVC.currentScreenInfo.newTxn}" />
+                <h:outputLabel id="txnDtLbl" styleClass="userEntry-label" for="txnDt" value="Transaction Date:" rendered="#{chequingTxnDetailMVC.currentScreenInfo.newTxn}"/>
+                <p:calendar id="txnDt" styleClass="singleresult-edit" navigator="true" yearRange="c-120:c+80" value="#{chequingTxnDetailMVC.viewChequingTxn.txnDt}"  rendered="#{chequingTxnDetailMVC.currentScreenInfo.newTxn}" 
+                				effect="slideDown" pattern="dd-MMM-yyyy"
+                	required="#{chequingTxnDetailMVC.currentScreenInfo.newTxn}" 
+                	requiredMessage="You must enter a Transaction Date" 
+                	converterMessage="Transaction Date must be in valid format"
+                	validator="#{chequingTxnDetailMVC.validateTransactionDt}" >
+                </p:calendar>
+                <h:message styleClass="errMessage-display" for="txnDt" rendered="#{chequingTxnDetailMVC.currentScreenInfo.newTxn}"/>
+                <h:outputLabel id="chequeNoLbl" styleClass="userEntry-label" for="chequeNo" value="Cheque No.:" rendered="#{chequingTxnDetailMVC.chequeIssueFlag and chequingTxnDetailMVC.currentScreenInfo.newTxn}" />
+                <p:inputText id="chequeNo" styleClass="singleresult-edit" value="#{chequingTxnDetailMVC.viewChequingTxn.chequeNo}" rendered="#{chequingTxnDetailMVC.chequeIssueFlag and chequingTxnDetailMVC.currentScreenInfo.newTxn}"
+                	required="#{chequingTxnDetailMVC.chequeIssueFlag and chequingTxnDetailMVC.currentScreenInfo.newTxn}"
+                	requiredMessage="You must enter a Cheque No." 
+					validatorMessage="Cheque No. cannot exceed 10 characters"> 
+				   <f:validateLength  maximum="10"/> 
+                </p:inputText>
+                <h:message styleClass="errMessage-display" for="chequeNo" rendered="#{chequingTxnDetailMVC.chequeIssueFlag and chequingTxnDetailMVC.currentScreenInfo.newTxn}" />
+                <h:outputLabel id="transferAcctInfoLbl" styleClass="userEntry-label" for="transferAcctInfo" value="Transfer Account:" rendered="#{chequingTxnDetailMVC.transferFlag and chequingTxnDetailMVC.currentScreenInfo.newTxn}"/>
+                <h:selectOneMenu id="transferAcctInfo"  styleClass="singleresult-edit" value="#{chequingTxnDetailMVC.selectedTransferAcctInfo}" rendered="#{chequingTxnDetailMVC.transferFlag and chequingTxnDetailMVC.currentScreenInfo.newTxn}" >
+   					<f:selectItems value="#{chequingTxnDetailMVC.transferAccountMap}" />
+   				</h:selectOneMenu>
+   				<h:message styleClass="errMessage-display" for="transferAcctInfo" rendered="#{chequingTxnDetailMVC.transferFlag and chequingTxnDetailMVC.currentScreenInfo.newTxn}" />
+           		<h:commandButton id="processButton" styleClass="button-display" value="Process"  
+                            action="#{chequingTxnDetailMVC.processNewChequingTxn()}" rendered="#{chequingTxnDetailMVC.currentScreenInfo.newTxn}"/> 
+                <h:commandButton value="Cancel" styleClass="button-display" action="#{chequingTxnDetailMVC.cancel()}" >
+                	<f:ajax />
+                </h:commandButton>
+                            
+                
+            </h:panelGrid>
+</h:form>
+</h:body>
+</html>

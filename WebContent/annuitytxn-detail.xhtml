@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+</h:head>
+<h:body>
+<h:form id="form">
+   <p:tabView id="tabView2" activeIndex="1" dynamic="false">  
+  <!--  
+        <p:ajax event="tabChange" listener="#{tabBean.onTabChange}" update=":form:growl"/>
+  -->  
+  
+        <p:tab title="About" id="About">  
+            <h:panelGrid columns="1" cellpadding="10"> 
+                <h:outputText  
+                    value="This is Ians Personal Bank App." /> 
+            </h:panelGrid>  
+        </p:tab>
+        <p:tab title="Portfolio Information" id="Portfolio"> 
+        	<h:panelGrid columns="1" cellpadding="10"> 
+                <h:outputText value="#{annuityTxnDetailMVC.txnDesc1}" /> 
+                <h:outputText value="#{annuityTxnDetailMVC.txnDesc2}" /> 
+            </h:panelGrid>
+			<h:panelGrid columns="2" cellpadding="10"> 
+           		<h:outputLabel id="amountLblA" for="amountA" value="Amount:" rendered="#{!annuityTxnDetailMVC.currentScreenInfo.newTxn}" />
+                <h:outputText styleClass="outputLabel" disabled="true"  id="amountA" value="#{annuityTxnDetailMVC.viewAnnuityTxn.amount}"  rendered="#{!annuityTxnDetailMVC.currentScreenInfo.newTxn}" > 
+                	<f:convertNumber currencySymbol="$" type="currency" />  
+                </h:outputText>   
+           		<h:outputLabel id="transferAcctInfoLblA" for="transferAcctInfoA" value="Transfer Account:" rendered="#{!annuityTxnDetailMVC.currentScreenInfo.newTxn}" />
+           		<h:outputText styleClass="outputLabel" id="transferAcctInfoA" value="#{annuityTxnDetailMVC.offsetAcctInfo}" rendered="#{!annuityTxnDetailMVC.currentScreenInfo.newTxn}" disabled="true" />
+                <h:outputLabel id="txnDtLblA" for="txnDtA" value="Transaction Date:" rendered="#{!annuityTxnDetailMVC.currentScreenInfo.newTxn}"  />
+                <h:outputText styleClass="outputLabel"   id="txnDtA" value="#{annuityTxnDetailMVC.viewAnnuityTxn.txnDt}"  disabled="true" rendered="#{!annuityTxnDetailMVC.currentScreenInfo.newTxn}" >
+                  	<f:convertDateTime pattern="EEEEEEEE, MMM dd, yyyy" />
+                </h:outputText>
+                <h:outputLabel id="dtChangedLblA" for="dtChangedA" value="Date Last Changed:" rendered="#{!annuityTxnDetailMVC.currentScreenInfo.newTxn}" />
+                <h:outputText styleClass="outputLabel"  id="dtChangedA" value="#{annuityTxnDetailMVC.viewAnnuityTxn.dtChanged}" disabled="true" rendered="#{!annuityTxnDetailMVC.currentScreenInfo.newTxn}" > 
+                   	<f:convertDateTime pattern="EEEEEEEE, MMM dd, yyyy" />
+                </h:outputText>
+                <h:outputLabel id="updatedByLblA" for="updatedByA" value="Updated By:" rendered="#{!annuityTxnDetailMVC.currentScreenInfo.newTxn}" />
+                <h:outputText styleClass="outputLabel"  id="updatedByA" value="#{annuityTxnDetailMVC.viewAnnuityTxn.updatedBy}" disabled="true" rendered="#{!annuityTxnDetailMVC.currentScreenInfo.newTxn}" /> 
+           		<h:commandButton id="reversButton" value="Reverse Transaction" rendered="#{!annuityTxnDetailMVC.currentScreenInfo.newTxn}"
+                            action="#{annuityTxnDetailMVC.reverseAnnuityTxn()}"/> 
+                <h:commandButton id="gobackButton" value="Go Back" rendered="#{!annuityTxnDetailMVC.currentScreenInfo.newTxn}"
+                            action="#{annuityTxnDetailMVC.cancel()}"/> 
+           </h:panelGrid>
+           
+        </p:tab>
+		<p:tab title="Add An Account" id="AddAccount">  
+		   <h:outputText  
+                    value="This is for adding an account." />  		
+        </p:tab>
+				<p:tab title="Sign Out" id="SignOut">  
+			<h:outputText  
+                    value="This is for client to sign out" />  		
+        </p:tab>
+    </p:tabView>  
+</h:form>
+</h:body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+</h:head>
+<h:body>
+<h:outputStylesheet library="css" name="pbstyles.css"  />
+<h:form id="form">
+   <p:growl id="growl" sticky="true" showDetail="true"/>  		
+   <p:tabView id="tabView" activeIndex="#{tabNavigator.activeTabIndex}" dynamic="true">  
+        <p:ajax event="tabChange" listener="#{tabNavigator.onStartPageTabChange}" update=":form:growl"/>
+        
+        <p:tab id="AboutInfo" title="Application Introduction" titleStyleClass="#{tabNavigator.aboutTabStyle}" >  
+            <h:panelGrid styleClass="pageheader-display" columns="1" cellpadding="3" > 
+                <h:outputText  
+                    value="About/Purpose of Personal Banker" />  
+            </h:panelGrid> 
+            <h:panelGrid styleClass="desc-display" > 
+            	<h:outputText value="PersonalBanker is a financial application which was conceived, architected, coded and tested by IAN ALEX, an experienced Java Developer from Toronto, Canada.    This is a Java/JEE application which integrates the following frameworks:  Maven, Spring 3.1 (IOC and AOP), Java Server Faces (JSF 2)/Primefaces 3.5, Hibernate 4.2 (with an underlying MySQL database), JAX-WS web services and some external libraries like the Yahoo Finance API and Joda.   " />
+            	<h:outputText value="" />
+            	<h:outputText value="" />
+            	<h:outputText value="The application provides a mock-up of  an online bank with the ability to open accounts and process transactions on various account activities (e.g. stock buys/sells, savings deposits, etc).   Sophistication is provided via the ability to execute inter-fund transfers, perform complex automatic interest/valuation calculations, computation of capital gains/losses on stock sells, etc.   The user is provided details about each account in his/her portfolio as well as details for each historic transaction in an account." />
+            	<h:outputText value="" />
+            	<h:outputText value="" />
+            	<h:outputText value="The purpose of this application is to demonstrate to potential clients and/or employers my capabilities in developing  sophisticated applications utilizing leading-edge industry technologies.  I chose to utilize Spring, Hibernate and JSF 2. MVC but I am equally capable in utilizing other Java frameworks such as GWT./Guice or Grails.  To those parties who have an sincere interest in my skills, I am willing to provide log-in credentials for them to familiarize themselves with this application.   I am also willing to provide a detailed technical explanation of the workings/architecture of this project. Along with snippets of source code from this project. " />
+            	<h:outputText value="" />
+            	<h:outputText value="" />
+            	<h:outputText value="f I haven't already provided log-in credentials to you, please feel free to go to the Register link on the Sign In page to introduce yourself to me as an interested party." />
+            	<h:outputText value="" />
+            	<h:outputText value="Thank you for your attention." />
+            	<h:outputText value="" />
+            	<h:outputText value="Ian Alex" />
+            </h:panelGrid>  
+        </p:tab>
+        <p:tab titleStyleClass="#{tabNavigator.loginTabStyle}" title="Sign In/Register" id="SignIn"> 
+            <h:panelGrid styleClass="pageheader-display" columns="1" cellpadding="3" > 
+                <h:outputText  
+                    value="Sign In" />  
+            </h:panelGrid>
+            <h:messages styleClass="errMessage-display" />
+            <h:panelGrid styleClass="formEdit-backgrd"  columns="2" cellpadding="2">
+                <h:outputLabel styleClass="userEntry-label" for="username" value="User Name:" />
+        		<h:inputText styleClass="singleresult-edit" id="username" value="#{loginMVC.name}"   >	
+				</h:inputText>		
+        		<h:outputLabel styleClass="userEntry-label" for="password" value="Password:" />
+        		<h:inputSecret styleClass="singleresult-edit" id="password" value="#{loginMVC.password}" >
+				</h:inputSecret>
+        		<h:commandButton value="Sign In"
+									action="#{loginMVC.signin()}"/>
+				<h:commandLink styleClass="commandlink-display" value="Register"
+                   action="registration.xhtml?faces-redirect=true" />
+				
+            </h:panelGrid>  
+        </p:tab>
+    </p:tabView>  
+</h:form>
+</h:body>
+</html>

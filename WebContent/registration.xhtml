@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+</h:head>
+<h:body>
+<h:outputStylesheet library="css" name="pbstyles.css"  />
+<h:form id="form">
+
+<p:growl id="growl" sticky="true" showDetail="true"/> 
+
+	<p:panel> 
+		<h:panelGrid styleClass="pageheader-display" columns="1" cellpadding="2"   > 
+        	<h:outputText styleClass="outputLabel" disabled="true"  value="Registration Form for PersonalBanker" />
+       	</h:panelGrid>  
+		<h:panelGrid columns="3" cellpadding="2"> 
+			<h:outputText styleClass="userEntry-label" value="First Name*:"   /> 
+			<p:inputText id="firstName" styleClass="singleresult-edit" value="#{registrationMVC.firstName}" 
+						required="true"
+						requiredMessage="You must enter a First Name" 
+						validatorMessage="First Name cannot exceed 30 characters"> 
+				<f:validateLength  maximum="30"/>
+			</p:inputText>
+			<h:message styleClass="errMessage-display" for="firstName"  />
+			<h:outputText styleClass="userEntry-label" value="Last Name*:"   /> 
+			<p:inputText id="lastName" styleClass="singleresult-edit" value="#{registrationMVC.lastName}" 
+						required="true"
+						requiredMessage="You must enter a Last Name" 
+						validatorMessage="Last Name cannot exceed 30 characters"> 
+				<f:validateLength  maximum="30"/>
+			</p:inputText>
+			<h:message styleClass="errMessage-display" for="lastName"  />
+			<h:outputText styleClass="userEntry-label" value="Firm/Organization*:"   /> 
+			<p:inputText id="company" styleClass="singleresult-edit" value="#{registrationMVC.company}" 
+						required="true"
+						requiredMessage="You must enter a Firm/Organization name" 
+						validatorMessage="Firm/Organization name cannot exceed 40 characters"> 
+				<f:validateLength  maximum="40"/>
+			</p:inputText>
+			<h:message styleClass="errMessage-display" for="company"  />
+			<h:outputText styleClass="userEntry-label" value="Web Site*:"   /> 
+			<p:inputText id="website" styleClass="singleresult-edit" value="#{registrationMVC.website}" 
+						required="true"
+						requiredMessage="You must enter a Web Site name" 
+						validatorMessage="Web Site name cannot exceed 40 characters"> 
+				<f:validateLength  maximum="40"/>
+			</p:inputText>
+			<h:message styleClass="errMessage-display" for="website"  />
+			<h:outputText styleClass="userEntry-label" value="EMail Address*:"   /> 
+			<p:inputText id="email" styleClass="singleresult-edit" value="#{registrationMVC.email}" 
+						required="true"
+						requiredMessage="You must enter an Email address" 
+						validator="#{registrationMVC.validateEmail}"> 
+				<f:validateLength  maximum="40"/>
+			</p:inputText>
+			<h:message styleClass="errMessage-display" for="email"  />
+			<h:outputText styleClass="userEntry-label" value="Telephone No.:"  /> 
+			<p:inputMask id="telephone" styleClass="singleresult-edit" value="#{registrationMVC.telephone}" 
+						mask="(999) 999-9999"
+						validatorMessage="Telephone No. cannot exceed 20 characters"> 
+					<f:validateLength  maximum="20"/>
+			</p:inputMask>			
+			<h:message styleClass="errMessage-display" for="telephone" />
+			<h:outputText styleClass="userEntry-label" value="Relationship to Ian Alex:" /> 
+			<h:selectOneMenu id="relationship" styleClass="singleresult-edit" value="#{registrationMVC.selectedPotentialUserType}" >
+					<f:selectItems value="#{registrationMVC.potentialUserTypeMap}" />
+			</h:selectOneMenu>
+			<h:message styleClass="errMessage-display" for="relationship" />
+		</h:panelGrid>
+		<h:panelGrid columns="1" cellpadding="2">
+			<h:outputLabel styleClass="userEntry-label"  value="State reason(s) for interest in PersonalBanker*: " />
+				<h:inputTextarea styleClass="singleresult-edit" value="#{registrationMVC.contactReason}" />
+		</h:panelGrid>
+		<h:panelGrid columns="2" cellpadding="2">
+			<h:commandButton id="processButton" styleClass="button-display" value="Submit"  
+                            action="#{registrationMVC.processRegistration()}" /> 
+            <h:commandButton value="Cancel" styleClass="button-display" action="start.xhtml?faces-redirect=true" >
+               	<f:ajax />
+            </h:commandButton>
+		</h:panelGrid>
+		
+	</p:panel>
+
+</h:form>
+</h:body>
+</html>

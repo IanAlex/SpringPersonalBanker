@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+</h:head>
+<h:body>
+<h:form id="form">
+   <p:tabView id="tabView" activeIndex="1" dynamic="false">  
+  <!--  
+        <p:ajax event="tabChange" listener="#{tabBean.onTabChange}" update=":form:growl"/>
+  -->  
+  
+        <p:tab title="About" id="About">  
+            <h:panelGrid columns="1" cellpadding="10"> 
+                <h:outputText  
+                    value="This is Ians Personal Bank App." /> 
+            </h:panelGrid>  
+        </p:tab>
+        <p:tab title="Portfolio Information" id="Portfolio"> 
+           <h:panelGrid columns="2" cellpadding="10"> 
+           		<h:outputLabel id="accountNameLbl" for="accountName" value="Account Name:"/>
+                <h:outputText id="accountName" value="#{chequingDetailMVC.chequing.accountName}" disabled="true" /> 
+                <h:outputLabel id="accountNoLbl" for="accountNo" value="Account No.:"/>
+                <h:outputText id="accountNo" value="#{chequingDetailMVC.chequing.accountNo}" disabled="true" /> 
+                <h:outputLabel value="Registered?" for="registered" />
+                <h:selectBooleanCheckbox id="registered" value="#{chequingDetailMVC.chequing.registered}" disabled="true" />
+                <h:outputLabel value="Joint?" for="joint" />
+    			<h:selectBooleanCheckbox id="joint" value="#{chequingDetailMVC.chequing.joint}" disabled="true" />
+    			<h:outputLabel id="balanceLbl" for="balance" value="Balance:"/>
+                <h:outputText id="balance" value="#{chequingDetailMVC.chequing.balance}" disabled="true" /> 
+      			<h:outputLabel id="openDtLbl" for="openDt" value="Open Date:"/>
+                <h:outputText id="openDt" value="#{chequingDetailMVC.chequing.openDt}" disabled="true" />                 
+            </h:panelGrid>   
+           <p:dataTable id="chequingTxnTable" var="chequingTxn" value="#{chequingDetailMVC.txnList}"
+               rows="25" paginator="true" paginatorPosition="bottom" style="width:25px:"
+               rowKey="#{chequingTxn.txnId}"  selection="#{chequingDetailMVC.selectedTxn}" selectionMode="single" > 
+        		<f:facet name="header">  
+          			 Chequing Transaction History
+        		</f:facet> 
+        		<p:column sortBy="#{chequingTxn.display}" headerText="Type">  
+	           		<h:outputText value="#{chequingTxn.display}" />  
+	     		</p:column> 
+	     		<p:column sortBy="#{chequingTxn.amount}" headerText="Amount">  
+	           		<h:outputText value="#{chequingTxn.amount}" />  
+	     		</p:column> 
+	     		<p:column sortBy="#{chequingTxn.txnDt}" headerText="Transaction Date">  
+	           		<h:outputText value="#{chequingTxn.txnDt}" />  
+	     		</p:column> 
+	     		
+               <f:facet name="footer"> 
+                    <h:commandButton id="viewButton" value="Selected Tranaction Detail"  
+                        action="#{chequingDetailMVC.doSelectedDetail()}"/>  
+                    
+               </f:facet>   
+           </p:dataTable> 
+           <h:panelGrid columns="3" cellpadding="10"> 
+           		<h:outputLabel id="chequingTxnTypesLbl" for="chequingTxnTypes" value="New Transaction:"/>
+  				<h:selectOneMenu id="chequingTxnTypes" value="#{chequingDetailMVC.selectedChequingTxnType}" >
+   					<f:selectItems value="#{chequingDetailMVC.chequingTxnTypesMap}" />
+   				</h:selectOneMenu>
+   				<h:commandButton id="viewButton" value="Go"  
+                            action="#{chequingDetailMVC.doNewChequingTxnScreen()}"/> 
+           </h:panelGrid> 
+        </p:tab>
+		<p:tab title="Add An Account" id="AddAccount"> 
+			<h:outputText  
+                    value="This is for adding an account." />  		
+        </p:tab>
+				<p:tab title="Sign Out" id="SignOut"> 	
+				<h:outputText  
+                    value="This is for client to sign out" />  		
+        </p:tab>
+    </p:tabView>  
+</h:form>
+</h:body>
+</html>

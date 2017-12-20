@@ -1,0 +1,375 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+</h:head>
+<h:body>
+<h:outputStylesheet library="css" name="pbstyles.css"  />
+<h:form id="form">
+
+	<p:growl id="growl" sticky="true" showDetail="true"/> 
+   <p:tabView id="tabView" activeIndex="#{tabNavigator.activeTabIndex}" dynamic="true">  
+    
+   <p:ajax event="tabChange" listener="#{tabNavigator.onMainPageTabChange}" update=":form:growl"/>
+   
+        <p:tab title="About" titleStyleClass="nav-menuTab" id="AboutA" disabled="true" >  
+           	<h:panelGrid columns="1" cellpadding="10"> 
+               	<h:outputText  
+                   	value="This is Ians Personal Bank App. on Main Page" />  
+           	</h:panelGrid>  
+        </p:tab>
+        <p:tab title="View/Edit Client Settings" titleStyleClass="nav-menuTab" id="ClientSettings" disabled="true" > 
+        	<h:panelGrid columns="1" cellpadding="10"> 
+                <h:outputText  
+                    value="This is client settings" />  
+            </h:panelGrid>  
+        </p:tab>
+        <p:tab title="Portfolio Information" titleStyleClass="nav-menuTab" id="Portfolio" disabled="true" >  
+             <h:panelGrid columns="1" cellpadding="10"> 
+                <h:outputText  
+                    value="This is chequing info" />  
+            </h:panelGrid> 
+        </p:tab>
+		<p:tab title="Add An Account" titleStyleClass="navChose-menuTab" id="AddAccount" >  
+			<p:wizard widgetVar="wiz" flowListener="#{accountSetUpMVC.onFlowProcess}" > 
+				<p:tab id="chooseActType" titleStyleClass="nav-wizTab" title="Account Type">
+				  <p:panel  >    
+					<h:messages styleClass="errMessage-display" />
+					<h:panelGrid styleClass="pageheader-display" columns="1" cellpadding="2"   > 
+        				<h:outputText styleClass="outputLabel" disabled="true"  value="Choose Account Type" />
+        			</h:panelGrid>  
+					<h:panelGrid columns="2" cellpadding="2"> 
+						<h:outputText styleClass="userEntry-label" value="Choose Account Type:" /> 
+						<h:selectOneMenu styleClass="singleresult-edit" id="acctTypes" value="#{accountSetUpMVC.selectedNewAcctType}" >
+							<f:selectItems value="#{accountSetUpMVC.acctTypesMap}" />
+						</h:selectOneMenu>
+						<p:commandButton id="quitNewA" styleClass="button-display" value="Quit"  
+                         			action="#{accountSetUpMVC.quitNewAccount}" />   
+					</h:panelGrid>	
+				  </p:panel>			
+				</p:tab>
+				<p:tab id="enterAcctInfo" titleStyleClass="nav-wizTab" title="Account Info">
+				  <p:panel  >
+				    <h:panelGrid styleClass="pageheader-display" columns="1" cellpadding="2"   > 
+        				<h:outputText styleClass="outputLabel" disabled="true"  value="Account Info Entry Form" />
+        			</h:panelGrid>      
+					<h:panelGrid columns="3" cellpadding="1">
+						<h:outputText styleClass="userEntry-label" value="Account Name*:" />  
+						<p:inputText id="acctName" styleClass="singleresult-edit" value="#{accountSetUpMVC.currentScreenInfo.newAccount.accountName}" 
+								required="true"
+								requiredMessage="You must enter an Account Name" 
+								validator="#{accountSetUpMVC.validateAccountName}" > 
+							<f:validateLength  maximum="25"/>
+						</p:inputText>
+						<h:message styleClass="errMessage-display" for="acctName"/>
+						<h:outputText styleClass="userEntry-label" value="Account No.*:" />  
+						<p:inputText id="acctNo" styleClass="singleresult-edit" value="#{accountSetUpMVC.currentScreenInfo.newAccount.accountNo}" 
+								required="true"
+								requiredMessage="You must enter an Account No." 
+								validator="#{accountSetUpMVC.validateAccountNo}" > 
+							<f:validateLength  maximum="20"/>
+						</p:inputText>
+						<h:message styleClass="errMessage-display" for="acctNo"/>
+						<h:outputText styleClass="userEntry-label" value="Open Date*:" />  
+						<p:calendar id="openDtA" styleClass="singleresult-edit"  navigator="true" yearRange="c-120:c+80" value="#{accountSetUpMVC.currentScreenInfo.newAccount.openDt}" 
+											effect="slideDown" pattern="dd-MMM-yyyy"
+								required="true"
+								requiredMessage="You must enter an Open Date" 
+								converterMessage="Open Date must be in valid format"
+								validator="#{accountSetUpMVC.validateOpenDt}" >
+						</p:calendar>
+						<h:message styleClass="errMessage-display" for="openDtA"/>
+						<h:outputText styleClass="userEntry-label" value="Registered:" /> 
+						<h:selectBooleanCheckbox id="registeredA" styleClass="singleresult-edit" value="#{accountSetUpMVC.currentScreenInfo.newAccount.registered}" />
+						<h:message styleClass="errMessage-display" for="registeredA"/>
+						<h:outputText styleClass="userEntry-label" value="Joint:"  /> 
+						<h:selectBooleanCheckbox id="jointA" styleClass="singleresult-edit" value="#{accountSetUpMVC.currentScreenInfo.newAccount.joint}" /> 
+						<h:message styleClass="errMessage-display" for="jointA"/>
+						<h:outputText styleClass="userEntry-label" value="Stock Symbol:*" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizStock()}" />
+						<p:inputText id="stockSymbol" styleClass="singleresult-edit" value="#{accountSetUpMVC.stockSymbol}" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizStock()}"
+								 required="#{accountSetUpMVC.currentScreenInfo.isthereWizStock()}" 
+								 requiredMessage="You must enter a Stock Symbol" 
+								 converterMessage="Stock Symbol cannot exceed 10 characters"
+								 validator="#{accountSetUpMVC.validateStockSymbol}" > 
+							<f:validateLength  maximum="10"/>
+						</p:inputText>
+						<h:message styleClass="errMessage-display" for="stockSymbol" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizStock()}"/>
+						<h:outputText styleClass="userEntry-label" value="Choose Annuity Term:" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}" />
+						<h:outputText styleClass="userEntry-label" value=" " rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}" />
+						<h:outputText styleClass="userEntry-label" value=" " rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}" />
+						<h:outputText styleClass="userEntry-label" value="  -In Months:" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}" />
+						<h:selectBooleanCheckbox id="chkTermMonths" styleClass="singleresult-edit" value="#{accountSetUpMVC.annuityTermMonthsChosen}" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}" >  
+            				<f:ajax   execute="chkTermMonths" render="termMonthsCodes chkTermYears termYearsCodes payfreqCodes" listener="#{accountSetUpMVC.onClickTermMonths}"/>  
+						</h:selectBooleanCheckbox>
+						<h:selectOneMenu id="termMonthsCodes" styleClass="singleresult-edit" value="#{accountSetUpMVC.selectedAnnuityTermMonthsCode}" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}" 
+														disabled="#{!accountSetUpMVC.annuityTermMonthsChosen}">
+							<f:selectItems value="#{accountSetUpMVC.annuityTermMonthsMap}" />
+							<f:ajax render="payfreqCodes" />
+						</h:selectOneMenu> 
+						<h:outputText styleClass="userEntry-label" value="  -In Years:" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}" />
+						<h:selectBooleanCheckbox id="chkTermYears" styleClass="singleresult-edit" value="#{accountSetUpMVC.annuityTermYearsChosen}" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}" >  
+            				<f:ajax   execute="chkTermYears" render="termMonthsCodes chkTermMonths termYearsCodes payfreqCodes" listener="#{accountSetUpMVC.onClickTermYears}"/>  
+						</h:selectBooleanCheckbox> 
+						<h:selectOneMenu id="termYearsCodes" styleClass="singleresult-edit" value="#{accountSetUpMVC.selectedAnnuityTermYearsCode}" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}" 
+														disabled="#{!accountSetUpMVC.annuityTermYearsChosen}">
+							<f:selectItems value="#{accountSetUpMVC.annuityTermYearsMap}" />
+							<f:ajax render="annuityPayFreq" />
+						</h:selectOneMenu>
+						<h:outputText styleClass="userEntry-label" value="Annuity Periodic Payment*:" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}"/>  
+						<p:inputText id="annuityPayment" styleClass="singleresult-edit" value="#{accountSetUpMVC.annuityPeriodicPayment}" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}" 
+								 required="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}" 
+								 requiredMessage="You must enter an Annuity Period Payment" 
+								 converterMessage="Annuity Periodic Payment must be numeric"
+								 validatorMessage="Annuity Periodic must be at least 1 dollar"> 
+							<f:validateDoubleRange  minimum="1"/>
+						</p:inputText>
+						<h:message styleClass="errMessage-display" for="annuityPayment" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}" />   
+					    <h:outputText styleClass="userEntry-label" id="annuityPayAcctInfoLblA" for="annuityPayAcctInfoA" value="Annuity Payments Go To:" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}" />
+					    <h:selectOneMenu id="annuityPayAcctInfoA" styleClass="singleresult-edit" value="#{accountSetUpMVC.selectedAnnuityPayAcctInfo}" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}" >	
+						    <f:selectItems value="#{accountSetUpMVC.annuityPayAccountMap}" />
+					    </h:selectOneMenu>	
+					    <h:message styleClass="errMessage-display" for="annuityPayAcctInfoLblA" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}" /> 
+						<h:outputText styleClass="userEntry-label" id="annuityPayFreq" value="Annuity Payment Frequency:" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}" /> 
+						<h:selectOneMenu id="payfreqCodes" styleClass="singleresult-edit" value="#{accountSetUpMVC.selectedAnnuityPayFreqCode}" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}" >
+							<f:selectItems value="#{accountSetUpMVC.annuityPayFreqCodesMap}" />
+						</h:selectOneMenu>
+						<h:message styleClass="errMessage-display" for="annuityPayFreq" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}"/> 
+						<h:outputText styleClass="userEntry-label" value="Annuity Interest Rate (%)*:" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}"/>  
+						<p:inputText id="annuityInterest" styleClass="singleresult-edit" value="#{accountSetUpMVC.annuityInterestRate}" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}" 
+								 required="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}"
+								 requiredMessage="You must enter an Annuity Interest Rate" 
+								 converterMessage="Annuity Interest Rate must be numeric"
+								 validatorMessage="Annuity Interest Rate must be a valid percentage (0.0001 to 100)"> 
+							<f:validateDoubleRange  minimum="0.0001" maximum="100"/>
+						</p:inputText> 
+						<h:message styleClass="errMessage-display" for="annuityInterest" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}" /> 
+						<h:outputText styleClass="userEntry-label" id="annuityIntCompFreq" value="Annuity Interest Compounded:" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}" /> 
+						<h:selectOneMenu id="annuityintfreqCodes" styleClass="singleresult-edit" value="#{accountSetUpMVC.selectedAnnuityIntCompFreqCode}" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}" >
+							<f:selectItems value="#{accountSetUpMVC.annuityIntCompFreqCodesMap}" />
+						</h:selectOneMenu>
+						<h:message styleClass="errMessage-display" for="annuityIntCompFreq" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}"/> 						
+						<h:outputText styleClass="userEntry-label" value="GIC/Term Deposit Maturity Date*:" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizGic()}" />  
+						<p:calendar id="gicMaturityDtA" styleClass="singleresult-edit" navigator="true" yearRange="c-120:c+80" value="#{accountSetUpMVC.gicMaturityDt}"  rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizGic()}"
+												effect="slideDown" pattern="dd-MMM-yyyy"
+								required="#{accountSetUpMVC.currentScreenInfo.isthereWizGic()}"
+								requiredMessage="You must enter a GIC/Term Depsoit Maturity Date" 
+								converterMessage="GIC/Term Deposit Maturity Date must be in valid format"
+								validator="#{accountSetUpMVC.validateGICMaturityDt}" >
+						</p:calendar>
+						<h:message styleClass="errMessage-display" for="gicMaturityDtA" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizGic()}" />
+						<h:outputText styleClass="userEntry-label" value="GIC/Term Deposit Interest Rate (%)*:" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizGic()}"/>  
+						<p:inputText id="GICInterest" styleClass="singleresult-edit" value="#{accountSetUpMVC.gicInterestRate}" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizGic()}" 
+								 required="#{accountSetUpMVC.currentScreenInfo.isthereWizGic()}" 
+								 requiredMessage="You must enter a GIC/Term Deposit Interest Rate" 
+								 converterMessage="GIC/Term Deposit Interest Rate must be numeric"
+								 validatorMessage="GIC/Term Deposit Interest Rate must be a valid percentage (0.0001 to 100)"> 
+							<f:validateDoubleRange  minimum="0.0001" maximum="100"/>
+						</p:inputText>
+						<h:message styleClass="errMessage-display" for="GICInterest" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizGic()}" />  
+						<h:outputText styleClass="userEntry-label" id="gicIntCompFreq" value="GIC/Term Deposit Interest Compounded:" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizGic()}" /> 
+						<h:selectOneMenu id="gicintfreqCodes" styleClass="singleresult-edit" value="#{accountSetUpMVC.selectedGicIntCompFreqCode}" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizGic()}" >
+							<f:selectItems value="#{accountSetUpMVC.gicIntCompFreqCodesMap}" />
+						</h:selectOneMenu>
+						<h:message styleClass="errMessage-display" for="gicIntCompFreq" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizGic()}"/> 						
+						<h:outputText styleClass="userEntry-label" value="Cashable:" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizGic()}" /> 
+						<h:selectBooleanCheckbox id="gicCashableA" styleClass="singleresult-edit" value="#{accountSetUpMVC.gicCashable}" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizGic()}" />
+						<h:message styleClass="errMessage-display" for="gicCashableA" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizGic()}" />
+					    <h:outputText styleClass="userEntry-label" id="gicPayAcctInfoLblA" for="gicPayAcctInfoA" value="GIC/Term Deposit Maturity Amount Goes To:" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizGic()}" />
+					    <h:selectOneMenu id="gicPayAcctInfoA" styleClass="singleresult-edit" value="#{accountSetUpMVC.selectedGicPayAcctInfo}" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizGic()}" >	
+						    <f:selectItems value="#{accountSetUpMVC.gicPayAccountMap}" />
+					    </h:selectOneMenu>	
+					    <h:message styleClass="errMessage-display" for="gicPayAcctInfoLblA" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizGic()}" /> 
+						<h:outputText styleClass="userEntry-label" value="Savings Effective Annual Int. Rate (%)*:" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizSavings()}"/>  
+						<p:inputText id="savingsInterest" styleClass="singleresult-edit" value="#{accountSetUpMVC.savingsRateInterest}" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizSavings()}" 
+								 required="#{accountSetUpMVC.currentScreenInfo.isthereWizSavings()}" 
+								 requiredMessage="You must enter a Savings Eff. Annual Int. Rate" 
+								 converterMessage="Savings Eff. Annual Int. Rate must be numeric"
+								 validatorMessage="Savings Eff. Annual Int. Rate must be a valid percentage (0.0001 to 100)"> 
+							<f:validateDoubleRange  minimum="0.0001" maximum="100"/>
+						</p:inputText>
+						<h:message styleClass="errMessage-display" for="savingsInterest" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizSavings()}" /> 
+					</h:panelGrid>
+				  </p:panel>				
+				</p:tab>
+				<p:tab id="enterTxnInfo" titleStyleClass="nav-wizTab" title="Opening Transaction In">  
+				   <p:panel >
+				    <h:panelGrid styleClass="pageheader-display" columns="1" cellpadding="2"   > 
+        				<h:outputText styleClass="outputLabel" disabled="true"  value="Opening Transaction Form" />
+        			</h:panelGrid>  
+				   	 <h:messages styleClass="errMessage-display" rendered="#{accountSetUpMVC.renderTxnHeadErr}" errorClass="error"/>
+				     <h:panelGrid columns="3" cellpadding="1">
+					   <h:outputText styleClass="userEntry-label" value="Opening Amount*:" rendered="#{!accountSetUpMVC.currentScreenInfo.isthereWizStock() and !accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}"/>
+					   <p:inputText id="txnAmountA" styleClass="singleresult-edit" value="#{accountSetUpMVC.txnAmount}" rendered="#{!accountSetUpMVC.currentScreenInfo.isthereWizStock() and !accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}"
+					   			 disabled="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity() or accountSetUpMVC.currentScreenInfo.isthereWizStock()}"
+					   			 required="true"
+								 requiredMessage="You must enter an Opening Amount" 
+								 converterMessage="Opening Amount must be numeric"
+								 validatorMessage="Opening Amount must be at least one cent"> 
+							<f:validateDoubleRange  minimum="0.01"/>
+					   </p:inputText>
+					   <h:message styleClass="errMessage-display" for="txnAmountA" rendered="#{!accountSetUpMVC.currentScreenInfo.isthereWizStock() and !accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}"/>  					   
+					   <h:outputText styleClass="userEntry-label" value="Opening Amount (PV of Annuity):" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}"/> 
+					   <h:outputText styleClass="outputLabel" disabled="true"  value="#{accountSetUpMVC.txnAmount}" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}"  > 
+					    	<f:convertNumber currencySymbol=" " type="currency" />
+					    </h:outputText>
+					   <h:outputText value=" " rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}"/> 
+					   <h:outputText styleClass="userEntry-label" value="Opening Amount [(# of shares * share price) + fee]:" 
+					   								rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizStock() and accountSetUpMVC.dispStockOpenAmt}"/>     
+					   <p:inputText id="txnAmountC" styleClass="singleresult-edit" value="#{accountSetUpMVC.txnAmount}" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizStock() and accountSetUpMVC.dispStockOpenAmt}"
+					   			 disabled="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity() or accountSetUpMVC.currentScreenInfo.isthereWizStock()}"
+					   			 required="true"
+								 requiredMessage="You must enter an Opening Amount" 
+								 converterMessage="Opening Amount must be numeric"
+								 validatorMessage="Opening Amount must be at least one cent"> 
+							<f:validateDoubleRange  minimum="0.01"/>
+					   </p:inputText>
+					   <h:message styleClass="errMessage-display" for="txnAmountC" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizStock() and accountSetUpMVC.dispStockOpenAmt}" />  
+					   <h:outputText styleClass="userEntry-label" value="No. Of Shares*:" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizStock()}"/>  
+					   <p:inputText id="txnStockUnits" styleClass="singleresult-edit" value="#{accountSetUpMVC.stockTxnUnits}" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizStock()}" 
+					   			 required="#{accountSetUpMVC.currentScreenInfo.isthereWizStock()}"
+								 requiredMessage="You must enter the No. of Shares" 
+								 converterMessage="No. of Shares must be a positve whole number"
+								 validatorMessage="No. of Shares must be at least 1"> 
+							<f:validateLongRange  minimum="1"/>
+					   </p:inputText> 
+					   <h:message styleClass="errMessage-display" for="txnStockUnits" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizStock()}" />  
+				</h:panelGrid>
+				<h:panelGrid id="stockPriceEntry" columns="4" cellpadding="1">
+ 		        		<h:outputLabel styleClass="userEntry-label" value="Share Price:" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizStock()}" /> 
+ 		        		<h:outputText styleClass="userEntry-label" value="Get Price From Ticker?" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizStock()}" /> 
+ 		        		<p:selectBooleanCheckbox id="fromTicker" styleClass="singleresult-edit" value="#{accountSetUpMVC.useTicker}" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizStock()}" > 
+ 		        			<p:ajax  update="stockPriceEntry" />
+ 		        		</p:selectBooleanCheckbox>
+ 		        		<h:outputText styleClass="userEntry-label"  value=" " rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizStock()}" /> 
+ 		        		<h:outputText styleClass="userEntry-label"  value=" " rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizStock() and !accountSetUpMVC.useTicker}" /> 
+ 		        		<h:outputText styleClass="userEntry-label"  value="Manually Enter Price Per Share*: " rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizStock() and !accountSetUpMVC.useTicker}" /> 
+						<p:inputText id="txnStockPrice" styleClass="singleresult-edit" value="#{accountSetUpMVC.manualStockPrice}" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizStock() and !accountSetUpMVC.useTicker}"  
+				    		required="#{accountSetUpMVC.currentScreenInfo.isthereWizStock()}" 
+							requiredMessage="You must enter a Price Per Share" 
+							converterMessage="Price Per Share entered must be numeric"
+							validatorMessage="Price Per Share entered must be at least one cent"> 
+				  			<f:validateDoubleRange  minimum="0.01"/>		    
+						</p:inputText>	
+						<h:message styleClass="errMessage-display" for="txnStockPrice" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizStock() and !accountSetUpMVC.useTicker}"  />
+						<h:outputText styleClass="userEntry-label" value=" " rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizStock() and accountSetUpMVC.useTicker}"  /> 
+						<h:outputText styleClass="userEntry-label"  value="Price Per Share From Ticker: " rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizStock() and accountSetUpMVC.useTicker}"  /> 
+						<h:outputText styleClass="userEntry-label"  id="priceA" value="#{accountSetUpMVC.stockInfo.latestPrice}" 
+									rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizStock() and accountSetUpMVC.useTicker}" > 
+                			<f:convertNumber currencySymbol=" " type="currency" /> 
+                		</h:outputText>
+                		<h:outputText styleClass="userEntry-label"  value=" " rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizStock() and accountSetUpMVC.useTicker}" /> 
+                </h:panelGrid>
+                <h:panelGrid columns="3" cellpadding="1">
+					   <h:outputText styleClass="userEntry-label" value="Stock Transaction Fee:" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizStock()}"/>  
+					   <p:inputText  id="txnStockFee" styleClass="singleresult-edit" value="#{accountSetUpMVC.stockTxnFee}" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizStock()}" 
+					   			 required="false" 
+								 converterMessage="Stock Transaction Fee must be numeric"
+								 />
+					   <h:message styleClass="errMessage-display" for="txnStockFee" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizStock()}"/> 
+					   <h:outputLabel styleClass="userEntry-label" id="transferAcctInfoLblA" for="transferAcctInfoA" value="Transfer In From:"/>
+					   <h:selectOneMenu id="transferAcctInfoA" styleClass="singleresult-edit" value="#{accountSetUpMVC.selectedTransferAcctInfo}" >	
+						   <f:selectItems value="#{accountSetUpMVC.transferAccountMap}" />
+					   </h:selectOneMenu>	
+					   <h:message styleClass="errMessage-display" for="transferAcctInfoLblA" rendered="#{!accountSetUpMVC.currentScreenInfo.isthereWizStock()}" /> 
+					</h:panelGrid>						
+				  </p:panel>
+				</p:tab>
+				<p:tab id="newAcctConfirm" titleStyleClass="nav-wizTab" title="Confirmation"> 
+				  <p:panel > 
+				  	<h:panelGrid styleClass="pageheader-display" columns="1" cellpadding="2"   > 
+        				<h:outputText styleClass="outputLabel" disabled="true"  value="Confirmation" />
+        			</h:panelGrid>  
+				    <h:panelGrid columns="2" cellpadding="1">
+						<h:outputText styleClass="userEntry-label" value="Account Name:" />  
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{accountSetUpMVC.currentScreenInfo.newAccount.accountName}"  /> 
+						<h:outputText styleClass="userEntry-label" value="Account No.:" />  
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{accountSetUpMVC.currentScreenInfo.newAccount.accountNo}" /> 
+						<h:outputText styleClass="userEntry-label" value="Open Date:" /> 
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{accountSetUpMVC.currentScreenInfo.newAccount.openDt}"  > 
+							<f:convertDateTime pattern="EEEEEEEE, MMM dd, yyyy" />							
+						</h:outputText>						
+						<h:outputText styleClass="userEntry-label" value="Registered:" for="registeredB" /> 
+						<h:selectBooleanCheckbox id="registeredB" disabled="true" value="#{accountSetUpMVC.currentScreenInfo.newAccount.registered}" />
+						<h:outputText styleClass="userEntry-label" value="Joint:" for="jointB" /> 
+						<h:selectBooleanCheckbox id="jointB" disabled="true" value="#{accountSetUpMVC.currentScreenInfo.newAccount.joint}" />
+						<h:outputText styleClass="userEntry-label"  value="Stock Symbol:" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizStock()}"/>  
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{accountSetUpMVC.stockSymbol}" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizStock()}"  />
+						<h:outputText styleClass="userEntry-label" value="Annuity Term (Months):" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}"/>  
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{accountSetUpMVC.selectedAnnuityTermMonthsCode}" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity() and accountSetUpMVC.annuityTermMonthsChosen}" />
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{accountSetUpMVC.selectedAnnuityTermYearsCode}" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity() and accountSetUpMVC.annuityTermYearsChosen}" />
+						<h:outputText styleClass="userEntry-label" value="Annuity Periodic Payment:" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}" />  						
+						<h:outputText styleClass="outputLabelsingleresult-display" disabled="true"  value="#{accountSetUpMVC.annuityPeriodicPayment}" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}" >
+							<f:convertNumber currencySymbol="$" type="currency" />
+						</h:outputText>
+					    <h:outputText styleClass="userEntry-label" value="Annuity Payments Go To:" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}" />
+					    <h:outputText styleClass="outputLabelsingleresult-display" disabled="true"  value="#{accountSetUpMVC.annuityPayAcctDesc}" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}"   /> 
+			            <h:outputText styleClass="userEntry-label" value="Annuity Payment Frequency:" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}" /> 
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{accountSetUpMVC.annuityPayFrequency}" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}" />
+						<h:outputText styleClass="userEntry-label" value="Annuity Interest Rate:" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}"/>  
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{accountSetUpMVC.annuityInterestRate / 100.0}" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}"  >
+							<f:convertNumber pattern="##0.00%"  />
+						</h:outputText>	
+			         	<h:outputText styleClass="userEntry-label" value="Annuity Interest Compounded:" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}" /> 
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{accountSetUpMVC.annuityIntCompFrequency}" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}" />
+						<h:outputText styleClass="userEntry-label" value="GIC/Term Deposit Interest Rate:" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizGic()}"/>  
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{accountSetUpMVC.gicInterestRate /100.0 }" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizGic()}"   >
+							<f:convertNumber pattern="##0.00%"  />
+						</h:outputText>
+			         	<h:outputText styleClass="userEntry-label" value="GIC/Term Deposit Interest Compouned:" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizGic()}" /> 
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{accountSetUpMVC.gicIntCompFrequency}" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizGic()}" />
+						<h:outputText styleClass="userEntry-label" value="Cashable:" for="cashableB" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizGic()}"  /> 
+						<h:selectBooleanCheckbox id="cashableB" disabled="true" value="#{accountSetUpMVC.gicCashable}" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizGic()}"  />
+						<h:outputText styleClass="userEntry-label" value="GIC/Term Deposit Maturity Date:" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizGic()}"  /> 
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{accountSetUpMVC.gicMaturityDt}" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizGic()}" > 
+							<f:convertDateTime pattern="EEEEEEEE, MMM dd, yyyy" />							
+						</h:outputText>	
+					    <h:outputText styleClass="userEntry-label" value="GIC/Term Deposit Maturity Value:" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizGic()}"/>  
+					    <h:outputText styleClass="singleresult-display" disabled="true"  value="#{accountSetUpMVC.gicMaturityValue}" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizGic()}" > 
+					    	<f:convertNumber currencySymbol="$" type="currency" />  
+					    </h:outputText>
+					    <h:outputText styleClass="userEntry-label" value="GIC/Term Deposit Maturity Amount Goes To:" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizGic()}" />
+					    <h:outputText styleClass="singleresult-display" disabled="true"  value="#{accountSetUpMVC.gicPayAcctDesc}" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizGic()}"   /> 
+						<h:outputText styleClass="userEntry-label" value="Savings Effective Annual Int. Rate:" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizSavings()}"/>  
+						<h:outputText styleClass="singleresult-display" disabled="true"  value="#{accountSetUpMVC.savingsRateInterest / 100.0}" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizSavings()}"  >
+							<f:convertNumber pattern="##0.00%"  />
+						</h:outputText>
+					    <h:outputText styleClass="userEntry-label" value="No. Of Shares:" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizStock()}"/>  
+					    <h:outputText styleClass="singleresult-display" disabled="true"  value="#{accountSetUpMVC.stockTxnUnits}" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizStock()}"  /> 
+					    <h:outputText styleClass="userEntry-label" value="Stock Price:" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizStock()}"/>  
+					    <h:outputText styleClass="singleresult-display" disabled="true"  value="#{accountSetUpMVC.stockTxnPrice}" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizStock()}"  > 
+					    	<f:convertNumber currencySymbol="$" type="currency" />  
+					    </h:outputText>
+					    <h:outputText styleClass="userEntry-label" value="Stock Transaction Fee:" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizStock()}"/>  
+					    <h:outputText styleClass="singleresult-display" disabled="true"  value="#{accountSetUpMVC.stockTxnFee}" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizStock()}"  > 
+					    	<f:convertNumber currencySymbol="$" type="currency" />  
+					    </h:outputText>
+					    <h:outputText styleClass="userEntry-label" value="Initial Amount In:" rendered="#{!accountSetUpMVC.currentScreenInfo.isthereWizStock() and !accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}" />  
+					    <h:outputText styleClass="singleresult-display" disabled="true"  value="#{accountSetUpMVC.txnAmount}" rendered="#{!accountSetUpMVC.currentScreenInfo.isthereWizStock() and !accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}"  > 
+					    	<f:convertNumber currencySymbol="$" type="currency" />
+					    </h:outputText>
+					    <h:outputText styleClass="userEntry-label" value="Amount In (PV of Annuity):" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}"/>  
+					    <h:outputText styleClass="singleresult-display" disabled="true"  value="#{accountSetUpMVC.txnAmount}" rendered="#{accountSetUpMVC.currentScreenInfo.isthereWizAnnuity()}"  > 
+					    	<f:convertNumber currencySymbol="$" type="currency" />
+					    </h:outputText>
+					    <h:outputLabel styleClass="userEntry-label" id="transferAcctInfoLblB" for="transferAcctInfoA" value="Transfer In From:"/>
+					    <h:outputText styleClass="singleresult-display" disabled="true"  value="#{accountSetUpMVC.transferAcctDesc}"   /> 
+					    <p:commandButton id="createNew" styleClass="button-display" value="Process"  
+                         			action="#{accountSetUpMVC.createNewAccount}" /> 
+                        <p:commandButton id="quitNewB" styleClass="button-display" value="Quit"  
+                         			action="#{accountSetUpMVC.quitNewAccount}" />     
+				    </h:panelGrid>
+				  </p:panel>
+				</p:tab> 
+          </p:wizard>
+        </p:tab>
+		<p:tab title="Sign Out" titleStyleClass="nav-menuTab" id="SignOut" disabled="true" > 
+			<h:outputText  
+                    value="This is for client to sign out" />  		
+        </p:tab>
+    </p:tabView>  
+</h:form>
+</h:body>
+</html>
